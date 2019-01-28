@@ -1,0 +1,50 @@
+group:
+  outdoors:
+    name: "Outdoors"
+    entities:
+      - light.frontdoor
+
+automation:
+    # ------------------------------------------------------- #
+    # Turn frontdoor light on at dusk                         #
+    # ------------------------------------------------------- #
+  - alias: 'Frontdoor light on'
+    trigger:
+#      - platform: sun
+#        event: sunset
+#        offset: '+00:00:00'
+      - platform: numeric_state
+        entity_id: sun.sun
+        value_template: '{{ state.attributes.elevation }}'
+        below: -3.0
+    condition:
+      - condition: state
+        entity_id: 'light.frontdoor'
+        state: 'off'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.frontdoor
+          brightness: 1
+
+    # ------------------------------------------------------- #
+    # Turn frontdoor light off at dawn                        #
+    # ------------------------------------------------------- #
+  - alias: 'Frontdoor light off'
+    trigger:
+#      - platform: sun
+#        event: sunrise
+#        offset: '+00:00:00'
+      - platform: numeric_state
+        entity_id: sun.sun
+        value_template: '{{ state.attributes.elevation }}'
+        above: -3.0
+    condition:
+      - condition: state
+        entity_id: 'light.frontdoor'
+        state: 'on'
+    action:
+      - service: light.turn_off
+        data:
+          entity_id: light.frontdoor
+

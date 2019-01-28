@@ -1,0 +1,23 @@
+climate:
+  - platform: demo
+#  - platform: opentherm_gw
+#    device: !secret dev_opentherm_gw
+#    precision: 0.5
+
+homeassistant:
+  customize:
+    climate.ecobee:
+      friendly_name: "Thermostaat woonkamer"
+    climate.heatpump:
+      friendly_name: "Thermostaat slaapkamer"
+    climate.hvac:
+      friendly_name: "Air Conditioner"
+
+group:
+  climate:
+    name: "Climate Control"
+    entities:
+      - climate.ecobee
+      - climate.heatpump
+      - climate.hvac
+

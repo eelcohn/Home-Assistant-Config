@@ -1,0 +1,88 @@
+#usps:
+#    username: !secret usps_username
+#    password: !secret usps_password
+
+sensor:
+#  - platform: fedex
+#    username: !secret fedex_username
+#    password: !secret fedex_password
+#  - platform: postnl
+#    username: !secret postnl_username
+#    password: !secret postnl_password
+  - platform: ups
+    username: !secret ups_username
+    password: !secret ups_password
+  - platform: template
+    sensors:
+      all_deliveries:
+        icon_template: mdi:package-variant-closed
+        unit_of_measurement: packages
+        value_template: >
+          {%-for attribute in states.sensor.postnl.attributes
+            if  ((attribute != 'attribution') and (attribute != 'unit_of_measurement') and (attribute != 'friendly_name') and (attribute != 'icon') and (attribute != 'entity_picture')) %}
+              {{attribute}} : {{states.sensor.postnl.attributes[attribute] }}
+          {%-endfor%}
+  - platform: template
+    sensors:
+      dpd:
+        icon_template: mdi:package-variant-closed
+        unit_of_measurement: packages
+        value_template: 0
+  - platform: template
+    sensors:
+      dhl:
+        icon_template: mdi:package-variant-closed
+        unit_of_measurement: packages
+        value_template: 0
+  - platform: template
+    sensors:
+      fedex:
+        icon_template: mdi:package-variant-closed
+        unit_of_measurement: packages
+        value_template: 0
+  - platform: template
+    sensors:
+      postnl:
+        icon_template: mdi:package-variant-closed
+        unit_of_measurement: packages
+        value_template: 0
+  - platform: template
+    sensors:
+      usps:
+        icon_template: mdi:package-variant-closed
+        unit_of_measurement: packages
+        value_template: 0
+
+homeassistant:
+  customize:
+    sensor.dpd:
+      friendly_name: "DPD"
+      entity_picture: /local/deliveries/dpd.svg
+    sensor.dhl:
+      friendly_name: "DHL"
+      entity_picture: /local/deliveries/dhl.svg
+    sensor.fedex:
+      friendly_name: "Fedex"
+      entity_picture: /local/deliveries/fedex.svg
+    sensor.postnl:
+      friendly_name: "PostNL"
+      entity_picture: /local/deliveries/postnl.svg
+    sensor.ups:
+      friendly_name: "UPS"
+      entity_picture: /local/deliveries/ups.svg
+    sensor.usps:
+      friendly_name: "USPS"
+      entity_picture: /local/deliveries/usps.svg
+
+group:
+  deliveries:
+    name: Deliveries
+    entities:
+      - sensor.all_deliveries
+      - sensor.dpd
+      - sensor.dhl
+      - sensor.fedex
+      - sensor.postnl
+      - sensor.ups
+      - sensor.usps
+

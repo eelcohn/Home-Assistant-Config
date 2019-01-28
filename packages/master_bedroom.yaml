@@ -1,0 +1,316 @@
+media_player:
+  - platform: denonavr
+    host: !secret ip_mp_amp_mb
+    name: Master Bedroom Amp
+    show_all_sources: true
+  - platform: samsungtv
+    host: !secret ip_mp_tv_mb
+    name: Master Bedroom TV
+
+sensor:
+  - platform: template
+    sensors:
+      alarm_time:
+        friendly_name: 'Wake-up light time'
+        icon_template: mdi:alarm
+        value_template: '{% if states.input_number.alarmhour.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.alarmhour.state|round(0)|string }}:{% if states.input_number.alarmminutes.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.alarmminutes.state|round(0)|string }}'
+        entity_id:
+          - input_number.alarmminutes
+          - input_number.alarmhour
+
+input_datetime:
+  debug_bedroom_alarm_clock_time:
+    name: Alarm Time
+    has_date: false
+    has_time: true
+    initial: '07:30'
+
+input_number:
+  alarmhour:
+    name: Wake-up light hour
+    icon: mdi:timer
+    initial: 7
+    min: 0
+    max: 23
+    step: 1
+  alarmminutes:
+    name: Wake-up light minutes
+    icon: mdi:timer
+    initial: 30
+    min: 0
+    max: 59
+    step: 1
+  alarmdelay:
+    name: Wake-up light transition delay
+    icon: mdi:timer
+    initial: 20
+    min: 0
+    max: 59
+    step: 1
+
+input_boolean:
+  bedroom_alarm_clock_enabled:
+    name: Activate Alarm
+    icon: mdi:alarm-check
+    initial: true
+  alarm_monday:
+    name: Monday
+    icon: mdi:calendar-clock
+    initial: true
+  alarm_tuesday:
+    name: Tuesday
+    icon: mdi:calendar-clock
+    initial: true
+  alarm_wednesday:
+    name: Wednesday
+    icon: mdi:calendar-clock
+    initial: true
+  alarm_thursday:
+    name: Thursday
+    icon: mdi:calendar-clock
+    initial: true
+  alarm_friday:
+    name: Friday
+    icon: mdi:calendar-clock
+    initial: true
+  alarm_saturday:
+    name: Saturday
+    icon: mdi:calendar-clock
+    initial: true
+  alarm_sunday:
+    name: Sunday
+    icon: mdi:calendar-clock
+    initial: true
+
+group:
+  master_bedroom:
+    name: "Master Bedroom"
+    entities:
+      - light.masterbedroom
+      - input_number.alarmhour
+      - input_number.alarmminutes
+      - input_number.alarmdelay
+      - sensor.alarm_time
+      - media_player.masterbedroom_tv
+      - media_player.masterbedroom_amp
+
+automation:
+# ------------------------------------------------------- #
+# Turn on wakeup automation in master bedroom             #
+# ------------------------------------------------------- #
+- alias: 'ZME_WALLC-S NorthWest'
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: zwave.unknown_node_8
+        scene_id: 1
+        scene_data: 0
+  action:
+    - service: light.turn_on
+      data:
+        entity_id: light.masterbedroom
+        brightness: 255
+        transition: 3
+        rgb_color:
+        - 255
+        - 0
+        - 0
+    - service: light.turn_off
+      data:
+        entity_id: light.masterbedroom
+    - service: homeassistant.turn_on
+      entity_id: automation.slaapkamer_wakeup_light
+
+# ------------------------------------------------------- #
+# Turn off wakeup automation in master bedroom            #
+# ------------------------------------------------------- #
+- alias: 'ZME_WALLC-S SouthWest'
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: zwave.unknown_node_8
+        scene_id: 5
+        scene_data: 0
+  action:
+    - service: light.turn_on
+      data:
+        entity_id: light.masterbedroom
+        brightness: 100
+        transition: 3
+        rgb_color:
+        - 255
+        - 207
+        - 121
+    - service: light.turn_off
+      data:
+        entity_id: light.masterbedroom
+    - service: homeassistant.turn_off
+      entity_id: automation.slaapkamer_wakeup_light
+
+# ------------------------------------------------------- #
+# Turn on master bedroom light                            #
+# ------------------------------------------------------- #
+- alias: 'ZME_WALLC-S NorthEast'
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: zwave.unknown_node_8
+        scene_id: 2
+        scene_data: 0
+  action:
+    - service: light.turn_on
+      data:
+        entity_id: light.masterbedroom
+        brightness: 100
+        transition: 2
+        rgb_color:
+        - 255
+        - 207
+        - 121
+
+# ------------------------------------------------------- #
+# Turn off master bedroom light                           #
+# ------------------------------------------------------- #
+- alias: 'ZME_WALLC-S SouthEast'
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: zwave.unknown_node_8
+        scene_id: 6
+        scene_data: 0
+  action:
+    - service: light.turn_on
+      data:
+        entity_id: light.masterbedroom
+        brightness: 1
+        transition: 3
+        rgb_color:
+        - 255
+        - 0
+        - 0
+    - service: light.turn_off
+      data:
+        entity_id: light.masterbedroom
+
+# ------------------------------------------------------- #
+# Gently turn on the bedroom light                        #
+# ------------------------------------------------------- #
+- alias: 'Slaapkamer Wake-Up light'
+  trigger:
+    - platform: time_pattern
+      minutes: '/1'
+      seconds: 0
+  condition:
+    - condition: state
+      entity_id: input_boolean.bedroom_alarm_clock_enabled
+      state: 'on'
+    - condition: template
+      value_template: "{{ states('sensor.time') == states('sensor.alarm_time') }}"
+#    - condition: state
+#      entity_id: group.phone_trackers
+#      state: 'home'
+    - condition: numeric_state
+      entity_id: sun.sun
+      value_template: '{{ state.attributes.elevation }}'
+      below: 1
+  action:
+    - service: script.turn_on
+      data:
+        entity_id: script.scn_wakeup_light_on
+
+# ------------------------------------------------------- #
+# Use remote control of bedroom amp to turn of light      #
+# ------------------------------------------------------- #
+- alias: 'Wake-Up light off'
+  trigger:
+    - platform: state
+      entity_id: media_player.master_bedroom_amp
+      to: 'off'
+  condition:
+    - condition: state
+      entity_id: script.scn_wakeup_light_on
+      state: 'on'
+  action:
+#    - service: scene.turn_off
+#      entity_id: script.scn_wakeup_light_on
+    - service: script.turn_on
+      data:
+        entity_id: script.scn_wakeup_light_off
+
+script:
+# ------------------------------------------------------- #
+# Gently turn on the bedroom light                        #
+# ------------------------------------------------------- #
+  scn_wakeup_light_on:
+    sequence:
+    - service: light.turn_on
+      data:
+        entity_id: light.masterbedroom
+        brightness: 1
+        rgb_color:
+        - 255
+        - 0
+        - 0
+    - delay:
+        milliseconds: 1
+    - service: light.turn_on
+      data:
+        entity_id: light.masterbedroom
+        brightness: 1
+        rgb_color:
+        - 255
+        - 0
+        - 0
+    - delay:
+        seconds: 1
+    - service: light.turn_on
+      data:
+        entity_id: light.masterbedroom
+        brightness: 255
+        rgb_color:
+        - 255
+        - 207
+        - 121
+        transition: 900
+    - delay:
+        seconds: 900
+    - service: media_player.turn_on
+      data:
+        entity_id: media_player.master_bedroom_amp
+    - service: media_player.select_source
+      data:
+        entity_id: media_player.master_bedroom_amp
+        source: TUNER
+    - service: media_player.volume_set
+      data:
+        entity_id: media_player.master_bedroom_amp
+        volume_level: 0.06
+    - service: media_player.play_media
+      entity_id: media_player.master_bedroom_amp
+      data:
+        media_content_type: music
+        media_content_id: "/local/Wake_Up_fade_in.mp3"
+    - delay:
+        seconds: 300
+    - service: light.turn_on
+      data:
+        entity_id: light.masterbedroom
+
+  scn_wakeup_light_off:
+    sequence:
+      - service: light.turn_on
+        data:
+          entity_id: light.masterbedroom
+          brightness: 1
+          rgb_color:
+          - 255
+          - 0
+          - 0
+      - service: light.turn_off
+        data:
+          entity_id: light.masterbedroom
+

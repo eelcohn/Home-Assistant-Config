@@ -1,0 +1,15 @@
+homeassistant:
+  customize:
+    zwave.aeotec_zw090_zstick_gen5_eu:
+      hidden: true
+    zwave.unknown_node_8:
+      friendly_name: ZME_WALLC-S
+    zwave.zwaveme_zme_wallcs_secure_wall_controller:
+      hidden: true
+
+zwave:
+  usb_path: !secret dev_zwave
+  network_key: !secret zwave_key
+  autoheal: true
+
+

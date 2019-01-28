@@ -1,0 +1,338 @@
+resources:
+  - url: /local/lovelace/mini-media-player-bundle.js
+    type: module
+  - url: /local/lovelace/compact-custom-header/compact-custom-header.js?v=0.2.8
+    type: js
+  - url: /local/lovelace/tracker-card-master/tracker-card.js?v0
+    type: js
+
+# Compact header
+x-compact-header: &compact-header
+- type: custom:compact-custom-header
+  header: true
+  menu: true
+  notification: true
+  voice: false
+  options: true
+  tabs: true
+  clock: notification
+  clock_format: 24
+  clock_am_pm: false
+
+# Images for Afvalwijzer
+x-afval-images: &afval-images
+                state_image:
+                  "gft": /local/mijnafvalwijzer/gft3.png
+                  "papier": /local/mijnafvalwijzer/papier3.png
+                  "restafval": /local/mijnafvalwijzer/rest3.png
+                  "pmd": /local/mijnafvalwijzer/plastic3.png
+                  "kerstbomen": /local/mijnafvalwijzer/kerstbomen_134.png
+                  "Geen": /local/mijnafvalwijzer/kliko3.png
+
+title: EelCapone's home
+views:
+  - title: Home
+    id: view-home
+    icon: mdi:home
+    panel: false
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: sensor
+            entity: sensor.power_consumption
+            name: Huidig stroomverbruik
+            graph: line
+            detail: 2
+            unit: kWh
+            icon: mdi:flash
+          - type: entities
+            id: card-power
+            title: Power
+            show_header_toggle: false
+            entities:
+              - sensor.power_tariff
+              - sensor.power_consumption_normal
+              - sensor.power_consumption_low
+              - sensor.nut_ups_input_voltage
+              - sensor.nut_ups_status
+              - sensor.nut_ups_battery_charge
+              - sensor.ups_battery_runtime_friendly
+          - type: history-graph
+            id: history-energy
+            title: 'Stroomverbruik'
+            entities:
+              - sensor.power_consumption
+              - sensor.power_consumption_normal
+              - sensor.power_consumption_low
+      - type: vertical-stack
+        cards:
+          - type: sensor
+            entity: sensor.gas_consumption
+            name: Huidig gasverbruik
+            graph: line
+            detail: 2
+            icon: mdi:flash
+            unit: m³/h
+          - type: history-graph
+            id: history-gas
+            title: 'Gasverbruik'
+            entities:
+              - sensor.gas_consumption
+      - type: vertical-stack
+        cards:
+        - type: horizontal-stack
+          title: Afval vandaag en morgen
+          cards:
+            - type: conditional
+              conditions:
+                - entity: sensor.trash_today
+                  state_not: "Geen"
+              card:
+                type: picture-entity
+                entity: sensor.trash_today
+                name: Vandaag wordt het {{ states.sensor.trash_today.state }} opgehaald
+                <<: *afval-images
+            - type: conditional
+              conditions:
+                - entity: sensor.trash_tomorrow
+                  state_not: "Geen"
+              card:
+                type: picture-entity
+                entity: sensor.trash_tomorrow
+                name: Morgen wordt het {{ states.sensor.trash_tomorrow.state }} opgehaald
+                <<: *afval-images
+        - type: glance
+          title: Afvalkalender
+          entities:
+            - sensor.trash_gft_date
+            - sensor.trash_papier_date
+            - sensor.trash_pmd_date
+            - sensor.trash_restafval_date
+            - sensor.trash_kerstbomen_date
+        - type: entities
+          title: Scheduled Deliveries
+          show_header_toggle: false
+          entities:
+            - sensor.dpd
+            - sensor.dhl
+            - sensor.fedex
+            - sensor.postnl
+            - sensor.ups
+            - sensor.usps
+            - sensor.all_deliveries
+      - <<: *compact-header
+
+  - title: Climate
+    id: view-climate
+    icon: mdi:leaf
+    cards:
+      - type: vertical-stack
+        title: Weather
+        cards:
+          - type: weather-forecast
+            name: Weather Forecast
+            entity: weather.buienradar
+          - type: glance
+            name: Environment
+            entities:
+              - sensor.current_uv_index
+              - sensor.max_uv_index
+              - sensor.current_ozone_level
+#              - sensor.luftdaten_16904_p1
+#              - sensor.luftdaten_16904_p2
+          - type: glance
+            name: Sun & Moon
+            entities:
+              - sensor.day_night
+              - sensor.sunrise
+              - sensor.sunset
+              - sensor.moon
+              - sensor.season
+          - type: picture-entity
+            entity: camera.buienradar_forecast
+            show_name: false
+            show_state: false
+      - type: vertical-stack
+        title: Climate Control
+        cards:
+          - type: entities
+            title: Climate Control
+            show_header_toggle: false
+            entities:
+              - climate.ecobee
+              - climate.heatpump
+              - climate.hvac
+          - type: history-graph
+            id: history-temperature
+            title: 'Temperature'
+            entities:
+              - climate.ecobee
+              - sensor.buienradar_temperature_2
+      - <<: *compact-header
+
+  - title: Living Quarters
+    id: view-livingroom
+    icon: mdi:sofa
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: entities
+            title: Media Players
+            show_header_toggle: false
+            entities:
+              - type: custom:mini-media-player
+                entity: media_player.livingroom_amp
+                artwork_border: true
+                group: true
+                hide_controls: false
+                hide_power: false
+                power_color: true
+                show_source: true
+                show_tts: google
+              - type: custom:mini-media-player
+                entity: media_player.livingroom_tv
+                artwork_border: true
+                group: true
+                hide_controls: false
+                hide_power: false
+                power_color: true
+                show_source: true
+                show_tts: google
+      - type: vertical-stack
+        cards:
+          - type: entities
+            title: Vacuum Cleaner
+            show_header_toggle: false
+            entities:
+              - input_boolean.housecleaning_activated
+              - input_number.housecleaning_hour
+              - input_number.housecleaning_minutes
+              - vacuum.roomba_living_quarters        
+      - <<: *compact-header
+
+  - title: Master Bedroom
+    id: view-masterbedroom
+    icon: mdi:bed-empty
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: light
+            title: Master Bedroom
+            entity: light.masterbedroom
+          - type: entities
+            title: Wake-up light
+            entities:
+              - sensor.alarm_time
+              - input_boolean.bedroom_alarm_clock_enabled
+              - input_number.alarmhour
+              - input_number.alarmminutes
+              - input_number.alarmdelay
+      - type: vertical-stack
+        cards:
+          - type: entities
+            title: Media Players
+            show_header_toggle: false
+            entities:
+              - type: custom:mini-media-player
+                entity: media_player.master_bedroom_amp
+                group: true
+                hide_controls: false
+                hide_power: false
+                power_color: true
+                show_source: true
+                show_tts: google
+              - type: custom:mini-media-player
+                entity: media_player.master_bedroom_tv
+                group: true
+                hide_controls: false
+                hide_power: false
+                power_color: true
+                show_source: true
+                show_tts: google
+      - <<: *compact-header
+
+  - title: Hallway
+    id: view-hallway
+    icon: mdi:stairs
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: glance
+            title: Hallway
+            entities:
+              - light.stairs_l
+              - light.stairs_m
+              - light.stairs_h
+      - <<: *compact-header
+
+  - title: Outdoors
+    id: view-outdoors
+    icon: mdi:terrain
+    cards:
+      - type: vertical-stack
+        title: Outdoor lights
+        cards:
+          - type: glance
+            title: Frontdoor
+            entities:
+              - light.frontdoor
+      - <<: *compact-header
+
+  - title: People
+    id: view-people
+    icon: mdi:account-multiple
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: glance
+            title: People
+            entities:
+              - device_tracker.eelco_phone
+              - device_tracker.eelco_phone_work
+      - type: map
+        default_zoom: 14
+        entities:
+          - device_tracker.eelco_phone
+          - device_tracker.eelco_phone_work
+          - zone.home
+      - <<: *compact-header
+
+  - title: Cars
+    id: view-cars
+    icon: mdi:car
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: glance
+            title: Seat Leon
+            entities:
+              - sensor.seat_leon_expdate
+              - sensor.seat_leon_insured
+              - sensor.seat_leon_recall
+      - <<: *compact-header
+
+  - title: Network
+    id: view-network
+    icon: mdi:server-network
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: glance
+            title: Network Devices
+            entities:
+              - sensor.uptime
+              - sensor.database_size
+              - sensor.fritzbox
+      - <<: *compact-header
+
+  - title: Configuration
+    id: view-configuration
+    icon: mdi:settings
+    cards:
+      - type: custom:tracker-card
+        title:
+        trackers:
+          - sensor.custom_card_tracker
+          - sensor.custom_component_tracker
+      - <<: *compact-header
+

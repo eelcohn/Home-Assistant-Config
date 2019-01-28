@@ -1,0 +1,7 @@
+- name: Home
+  latitude: !secret location_latitude
+  longitude: !secret location_longitude
+  icon: mdi:home
+  radius: 20
+
+

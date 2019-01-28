@@ -1,0 +1,119 @@
+# By default, ignore all files
+*
+# Eventually I will change this, but for now, I'll write in what I want to be shared.
+
+# Share this file
+!.gitignore
+
+# Share Markdown files & images
+!*.md
+!docs/images/*.png
+!docs/images/*.jpg
+
+# Explicitly allow YAML files
+!*.yaml
+
+# Any scripts that I may write
+!*.sh
+
+# Cloud9 Configuration
+!.c9/project.settings
+
+# Travis Configuration
+!.travis
+!.travis/travis.*
+!.travis.yml
+
+# Allow the following subfolders
+!appdaemon
+!automations
+!custom_components
+!docs
+!images
+!packages
+!scenes
+!scripts
+!themes
+
+# Ignore Sensitive Files
+secrets.yaml
+known_devices.yaml
+entity_registry.yaml
+ip_bans.yaml
+secrets
+phue*.conf
+lgwebos*.conf
+.uuid
+tts
+
+# Logs
+logs
+*.log
+npm-debug.log*
+OZW_Log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# AppDaemon
+appdaemon/__pycache__
+
+# Config files
+phue*.conf
+webostv.conf
+
+# Cached stuff
+deps
+
+# Python cache
+__pycache__
+*.pyc
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+
+# Ignore folders.
+.cloud
+
+# Cookies and tokens
+*.google.token
+.google.token
+*.pickle
+.spotify-token-cache
+.storage
+
+
+
+
+
+
+
+
+
+# Personal photo's and floorplans
+www/icons
+www/floorplans
+
+# Other
+*.conf
+
+home-assistant.env
+home-assistant.*
+known_devices.yaml
+entity_registry.yaml
+secrets.yaml
+google_calendars.yaml
+
+*.noload
+*.txt
+*.xml
+*.backup
+.ip_authenticated.yaml
+.config_entries.json
+

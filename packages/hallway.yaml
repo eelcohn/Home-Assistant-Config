@@ -1,0 +1,10 @@
+group:
+  hallway:
+    name: Hallway
+    entities:
+      - light.hallwayfrontdoor
+      - light.hallwayfar
+      - light.stairs_l
+      - light.stairs_m
+      - light.stairs_h
+

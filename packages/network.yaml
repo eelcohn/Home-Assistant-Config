@@ -1,0 +1,29 @@
+fritzbox:
+  devices:
+    - host: !secret ip_router_fritzbox
+      username: !secret fritzbox_username
+      password: !secret fritzbox_password
+
+sensor:
+  - platform: uptime
+  - platform: synologydsm
+    host: !secret ip_synologydsm
+    username: !secret synology_username
+    password: !secret synology_password
+    monitored_conditions:
+      - cpu_total_load
+      - memory_real_usage
+      - network_up
+  - platform: sql
+    db_url: !secret mariadb_url
+    queries:
+      - name: Database size
+        query: !secret mariadb_sizequery
+        column: 'value'
+        unit_of_measurement: MB
+
+homeassistant:
+  customize:
+    sensor.database_size:
+      icon: mdi:database
+

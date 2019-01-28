@@ -1,0 +1,74 @@
+sensor:
+  - platform: rdw
+    name: "Seat Leon"
+    plate: !secret licenseplate
+    sensors:
+      - expdate
+      - insured
+      - recall
+  - platform: template
+    sensors:
+      seat_leon_apk:
+          value_template: "{{ as_timestamp(states('sensor.seat_leon_expdate')).strftime('%d %m %Y') }}"
+
+group:
+  car_seat_leon:
+    name: "Seat Leon"
+    entities:
+      - sensor.seat_leon_expdate
+      - sensor.seat_leon_insured
+      - sensor.seat_leon_recall
+
+homeassistant:
+  customize:
+    sensor.seat_leon_expdate:
+      friendly_name: "APK Vervaldatum"
+    sensor.seat_leon_insured:
+      friendly_name: "Verzekeringsstatus"
+    sensor.seat_leon_recall:
+      friendly_name: "Terugroepstatus"
+
+automation:
+    # ------------------------------------------------------- #
+    # Notify when the APK date is about to expire             #
+    # ------------------------------------------------------- #
+  - alias: APK date expiration notification
+    trigger:
+      - platform: template
+        value_template: "{{ (as_timestamp(states('sensor.seat_leon_expdate')) + timedelta(days=30)) == as_timestamp(states('sensor.date')) }}"
+    action:
+      - service: notify.eelco
+        data_template:
+          title: '*Auto*'
+          message: De APK keuring verloopt op {{ states.sensor.seat_leon_expdate.state }}. Plan een APK keuring bij de garage.
+
+    # ------------------------------------------------------- #
+    # Notify when the car's insurance has expired             #
+    # ------------------------------------------------------- #
+  - alias: Insurance expiration notification
+    initial_state: True
+    trigger:
+      - platform: state
+        entity_id: sensor.seat_leon_insured
+        to: 'False'
+    action:
+      - service: notify.eelco
+        data_template:
+          title: '*Auto*'
+          message: De auto is niet verzekerd! Sluit een autoverzekering af voordat je ermee de weg op gaat.
+
+    # ------------------------------------------------------- #
+    # Notify when a maintenance recall has been issued        #
+    # ------------------------------------------------------- #
+  - alias: Recall notification
+    initial_state: False
+    trigger:
+      - platform: state
+        entity_id: sensor.seat_leon_recall
+        to: 'True'
+    action:
+      - service: notify.eelco
+        data_template:
+          title: '*Auto*'
+          message: Er is een terugroepactie uitgevaardigd voor de auto. Maak een afspraak bij de garage om het probleem te verhelpen.
+

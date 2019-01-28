@@ -1,0 +1,45 @@
+# --------------------------------------------------------------------------- #
+# Settings for HomeAssistant database recording all sensors etc.              #
+# --------------------------------------------------------------------------- #
+recorder:
+  db_url: !secret mariadb_url
+  purge_keep_days: 30
+  purge_interval: 1
+  exclude:
+    domains:
+      - group
+      - sun
+      - time_date
+      - weather.buienradar
+# temp because we don't have climate control yet, so no need to record this
+      - climate
+    entities:
+      - camera.buienradar_forecast
+      - camera.knmi_weatherradar
+      - sensor.moon
+      - sensor.time
+      - sensor.date
+      - sensor.date_time
+      - sensor.time_date
+      - sensor.time_utc
+      - sensor.internet_time
+      - sensor.trash_gft
+      - sensor.trash_gft_date
+      - sensor.trash_kerstbomen
+      - sensor.trash_kerstbomen_date
+      - sensor.trash_next
+      - sensor.trash_papier
+      - sensor.trash_papier_date
+      - sensor.trash_pmd
+      - sensor.trash_pmd_date
+      - sensor.trash_restafval
+      - sensor.trash_restafval_date
+      - sensor.trash_today
+      - sensor.trash_tomorrow
+      - sensor.yr_pressure
+      - sensor.yr_symbol
+      - sensor.yr_temperature
+      - sensor.yr_wind_speed
+      - sensor.database_size
+      - weather.buienradar
+

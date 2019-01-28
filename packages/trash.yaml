@@ -1,0 +1,115 @@
+sensor:
+  - platform: mijnafvalwijzer
+    postcode: !secret location_zipcode
+    huisnummer: !secret location_huisnummer
+    toevoeging: !secret location_toevoeging
+    datumformaat: "%a %d %b"
+  - platform: template
+    sensors:
+      trash_restafval_date:
+        value_template: '{{ as_timestamp( strptime(states.sensor.trash_restafval.state, "%d-%m-%Y") ) | timestamp_custom("%a %d %b") }}'
+  - platform: template
+    sensors:
+      trash_gft_date:
+        value_template: '{{ as_timestamp( strptime(states.sensor.trash_gft.state, "%d-%m-%Y") ) | timestamp_custom("%a %d %b") }}'
+  - platform: template
+    sensors:
+      trash_pmd_date:
+        value_template: '{{ as_timestamp( strptime(states.sensor.trash_pmd.state, "%d-%m-%Y") ) | timestamp_custom("%a %d %b") }}'
+  - platform: template
+    sensors:
+      trash_papier_date:
+          value_template: '{{ as_timestamp( strptime(states.sensor.trash_papier.state, "%d-%m-%Y") ) | timestamp_custom("%a %d %b") }}'
+  - platform: template
+    sensors:
+      trash_kerstbomen_date:
+          value_template: '{{ as_timestamp( strptime(states.sensor.trash_kerstbomen.state, "%d-%m-%Y") ) | timestamp_custom("%a %d %b") }}'
+
+input_boolean:
+  trash_reminders:
+    name: Trash Reminders
+    initial: on
+    icon: mdi:recycle
+#    icon: mdi:delete-variant
+
+homeassistant:
+  customize:
+    sensor.trash_gft:
+      friendly_name: "GFT"
+      entity_picture: /local/mijnafvalwijzer/gft3.png
+      hidden: true
+    sensor.trash_gft_date:
+      friendly_name: "GFT"
+      entity_picture: /local/mijnafvalwijzer/gft3.png
+    sensor.trash_restafval:
+      friendly_name: "Restafval"
+      entity_picture: /local/mijnafvalwijzer/rest3.png
+      hidden: true
+    sensor.trash_restafval_date:
+      friendly_name: "Restafval"
+      entity_picture: /local/mijnafvalwijzer/rest3.png
+    sensor.trash_papier:
+      friendly_name: "Oud papier"
+      entity_picture: /local/mijnafvalwijzer/papier3.png
+      hidden: true
+    sensor.trash_papier_date:
+      friendly_name: "Oud papier"
+      entity_picture: /local/mijnafvalwijzer/papier3.png
+    sensor.trash_pmd:
+      friendly_name: "PMD"
+      entity_picture: /local/mijnafvalwijzer/plastic3.png
+      hidden: true
+    sensor.trash_pmd_date:
+      friendly_name: "PMD"
+      entity_picture: /local/mijnafvalwijzer/plastic3.png
+    sensor.trash_kerstbomen:
+      friendly_name: "Kerstbomen"
+      entity_picture: /local/mijnafvalwijzer/kerstbomen_134.png
+      hidden: true
+    sensor.trash_kerstbomen_date:
+      friendly_name: "Kerstbomen"
+      entity_picture: /local/mijnafvalwijzer/kerstbomen_134.png
+
+group:
+  trash_pickup:
+    name: "Trash pickup"
+    control: hidden
+    entities:
+      - sensor.trash_gft
+      - sensor.trash_gft_date
+      - sensor.trash_kerstbomen
+      - sensor.trash_kerstbomen_date
+      - sensor.trash_papier
+      - sensor.trash_papier_date
+      - sensor.trash_pmd
+      - sensor.trash_pmd_date
+      - sensor.trash_restafval
+      - sensor.trash_restafval_date
+      - sensor.trash_next
+      - sensor.trash_today
+      - sensor.trash_tomorrow
+      - sensor.trash_reminders
+
+automation:
+    # ------------------------------------------------------- #
+    # Notify when the trash needs to be taken out             #
+    # ------------------------------------------------------- #
+  - alias: Trash Pickup Reminder
+    initial_state: true
+    hide_entity: true
+    trigger:
+      - platform: time
+        at: '18:00:00'
+    condition:
+      condition: and
+      conditions:
+      - condition: template
+        value_template: '{{ states.input_boolean.trash_reminders.state == "on" }}'
+      - condition: template
+        value_template: '{{ states.sensor.trash_tomorrow.state != "Geen" }}'
+    action:
+      - service: notify.eelco
+        data_template:
+          title: '*Afvalnotificatie*'
+          message: Morgen wordt het {{ states.sensor.trash_tomorrow.state }} opgehaald. Zet het {{ states.sensor.trash_tomorrow.state }} bij de weg.
+

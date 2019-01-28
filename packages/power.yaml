@@ -1,0 +1,258 @@
+sensor:
+  - platform: dsmr
+    port: !secret dev_dsmr
+    dsmr_version: 5
+  - platform: nut
+    resources:
+    - ups.status
+    - ups.status.display
+    - battery.charge
+    - battery.runtime
+    - input.voltage
+  - platform: template
+    sensors:
+      ups_status:
+        friendly_name: "UPS Status"
+        value_template: "{{ states.sensor.nut_ups_status_data.state }}"
+        icon_template: >
+          if (states.sensor.nut_ups_status_data.state == 'OL')       return 'mdi:power-plug';
+          if (states.sensor.nut_ups_status_data.state == 'OB')       return 'mdi:power-plug-off';
+          if (states.sensor.nut_ups_status_data.state == 'LB')       return 'mdi:battery-outline';
+          if (states.sensor.nut_ups_status_data.state == 'RB')       return 'mdi:battery-alert';
+          if (states.sensor.nut_ups_status_data.state == 'CHRG')     return 'mdi:battery-charging';
+          if (states.sensor.nut_ups_status_data.state == 'DISCHRG')  return 'mdi:battery-minus';
+          if (states.sensor.nut_ups_status_data.state == 'BYPASS')   return 'mdi:battery-unknown';
+          if (states.sensor.nut_ups_status_data.state == 'CAL')      return 'mdi:battery-unknown';
+          if (states.sensor.nut_ups_status_data.state == 'OFF')      return 'mdi:power-sleep';
+          if (states.sensor.nut_ups_status_data.state == 'OVER')     return 'mdi:alert-outline';
+          if (states.sensor.nut_ups_status_data.state == 'TRIM')     return 'mdi:alert-outline';
+          if (states.sensor.nut_ups_status_data.state == 'BOOST')    return 'mdi:alert-outline';
+          return 'mdi:battery-unknown';
+  - platform: template
+    sensors:
+      ups_battery_charging:
+        device_class: battery
+        friendly_name: "UPS Battery Charge"
+        unit_of_measurement: '%'
+        value_template: "{{ states.sensor.nut_ups_battery_charge.state | int }}"
+        icon_template: >
+          {% set battery_level = states.sensor.nut_ups_battery_charge.state | default(0) | int %}
+          {% set battery_round = (battery_level / 10) | int %}
+          {% if battery_round < 1 %}
+            mdi:battery-outline
+          {% elif battery_round < 9 %}
+            mdi:battery-charging-{{ battery_round }}0
+          {% else %}
+            mdi:battery-charging-100
+          {% endif %}
+  - platform: template
+    sensors:
+      ups_battery_discharging:
+        device_class: battery
+        friendly_name: "UPS Battery Charge"
+        unit_of_measurement: '%'
+        value_template: "{{ states.sensor.nut_ups_battery_charge.state }}"
+  - platform: template
+    sensors:
+      ups_battery_runtime_friendly:
+        entity_id:
+          - sensor.ups_battery_runtime
+        friendly_name: "UPS Battery Runtime"
+        unit_of_measurement: ""
+        value_template: >
+          {% set battery_hours   = ((states.sensor.nut_ups_battery_runtime.state | default(0) | int) / 3600) | int %}
+          {% set battery_minutes = ((states.sensor.nut_ups_battery_runtime.state | default(0) | int) / 60)   | int %}
+          {% set battery_seconds = ((states.sensor.nut_ups_battery_runtime.state | default(0) | int) % 60)   | int %}
+            {{ battery_hours }}h {{ battery_minutes }}m {{ battery_seconds }}s
+
+group:
+  power:
+    name: "Power"
+    entities:
+      - sensor.gas_consumption
+      - sensor.nut_ups_input_voltage
+      - sensor.nut_ups_status
+      - sensor.nut_ups_battery_charge
+      - sensor.nut_ups_battery_runtime
+      - sensor.ups_status
+      - sensor.ups_battery_charging
+      - sensor.ups_battery_discharging
+      - sensor.ups_battery_runtime_friendly
+      - sensor.power_consumption
+      - sensor.power_consumption_normal
+      - sensor.power_consumption_low
+      - sensor.power_tariff
+
+homeassistant:
+  customize:
+    sensor.nut_ups_battery_runtime:
+      friendly_name: "UPS Battery runtime"
+    sensor.ups_battery_runtime_friendly:
+      friendly_name: "UPS Battery runtime"
+      icon: mdi:timer
+    sensor.nut_ups_battery_charge:
+      device_class: battery
+      friendly_name: "UPS Battery charge"
+    sensor.nut_ups_input_voltage:
+      friendly_name: "UPS Input voltage"
+    sensor.nut_ups_status:
+      friendly_name: "UPS Status"
+#      icon: mdi:car-battery
+      icon_template: >
+        {% if (state == 'OL')       %} mdi:power-plug
+        {% if (state == 'OB')       %} mdi:power-plug-off
+        {% if (state == 'LB')       %} mdi:battery-outline
+        {% if (state == 'RB')       %} mdi:battery-alert
+        {% if (state == 'CHRG')     %} mdi:battery-charging
+        {% if (state == 'DISCHRG')  %} mdi:battery-minus
+        {% if (state == 'BYPASS')   %} mdi:battery-unknown
+        {% if (state == 'CAL')      %} mdi:battery-unknown
+        {% if (state == 'OFF')      %} mdi:power-sleep
+        {% if (state == 'OVER')     %} mdi:alert-outline
+        {% if (state == 'TRIM')     %} mdi:alert-outline
+        {% if (state == 'BOOST')    %} mdi:alert-outline
+        mdi:battery-unknown
+    sensor.nut_ups_status_data:
+      hidden: true
+    sensor.power_consumption:
+      friendly_name: "Huidig verbruik"
+    sensor.power_consumption_normal:
+      friendly_name: "Totaal verbruik (normaal)"
+    sensor.power_consumption_low:
+      friendly_name: "Totaal verbruik (laag)"
+    sensor.power_tariff:
+      friendly_name: "Huidig tarief"
+      icon: mdi:currency-eur
+    sensor.power_production:
+      hidden: true
+    sensor.power_production_low:
+      hidden: true
+    sensor.power_production_normal:
+      hidden: true
+    sensor.power_production_phase_l1:
+      hidden: true
+    sensor.power_production_phase_l2:
+      hidden: true
+    sensor.power_production_phase_l3:
+      hidden: true
+    sensor.power_consumption_phase_l1:
+      hidden: true
+    sensor.power_consumption_phase_l2:
+      hidden: true
+    sensor.power_consumption_phase_l3:
+      hidden: true
+    sensor.voltage_sags_phase_l1:
+      hidden: true
+    sensor.voltage_sags_phase_l2:
+      hidden: true
+    sensor.voltage_sags_phase_l3:
+      hidden: true
+    sensor.voltage_swells_phase_l1:
+      hidden: true
+    sensor.voltage_swells_phase_l2:
+      hidden: true
+    sensor.voltage_swells_phase_l3:
+      hidden: true
+    sensor.hourly_gas_consumption:
+      hidden: true
+    sensor.long_power_failure_count:
+      hidden: true
+
+frontend:
+  themes:
+    alert_yellow:
+      primary-text-color: '#FFC000'
+      paper-item-icon-color: '#FFC000'
+    alert_red:
+      primary-text-color: '#FF0000'
+      paper-item-icon-color: '#FF0000'
+
+# ------------------------------------------------------- #
+# Send notifications on power outages                     #
+# ------------------------------------------------------- #
+
+automation:
+    # ------------------------------------------------------- #
+    # Notify on power disruptions                             #
+    # ------------------------------------------------------- #
+  - alias: 'UPS Power disruption notification'
+    trigger:
+      - platform: state
+        entity_id: sensor.nut_ups_status_data
+        to: 'OB DISCHRG'
+    action:
+      - service: notify.eelco
+        data:
+          title: '*UPS notificatie*'
+          message: 'Power disrupted!'
+
+    # ------------------------------------------------------- #
+    # Notify when the UPS battery runs out                    #
+    # ------------------------------------------------------- #
+  - alias: 'UPS Power battery low notification'
+    trigger:
+      - platform: state
+        entity_id: sensor.nut_ups_status_data
+        to: 'LB'
+    action:
+      - service: notify.eelco
+        data:
+          title: '*UPS notificatie*'
+          message: 'UPS battery is low. Shutting down DSM and network.'
+
+    # ------------------------------------------------------- #
+    # Notify when the power has been restored                 #
+    # ------------------------------------------------------- #
+  - alias: 'UPS Power restored notification'
+    trigger:
+      - platform: state
+        entity_id: sensor.nut_ups_status_data
+        to: 'OL CHRG'
+    action:
+      - service: notify.eelco
+        data:
+          title: '*UPS notificatie*'
+          message: 'Power is restored'
+
+    # ------------------------------------------------------- #
+    # Notify when battery charging has completed              #
+    # ------------------------------------------------------- #
+  - alias: 'UPS Battery charging completed notification'
+    trigger:
+      - platform: state
+        entity_id: sensor.nut_ups_status_data
+        to: 'OL'
+    action:
+      - service: notify.eelco
+        data:
+          title: '*UPS notificatie*'
+          message: 'Battery charging completed'
+
+    # ------------------------------------------------------- #
+    # Notify when the UPS battery needs to be replaced        #
+    # ------------------------------------------------------- #
+  - alias: 'UPS Replace Battery notification'
+    trigger:
+      - platform: state
+        entity_id: sensor.nut_ups_status_data
+        to: 'RB'
+    action:
+      - service: notify.eelco
+        data:
+          title: '*UPS notificatie*'
+          message: 'UPS Battery needs to be replaced!'
+
+    # ------------------------------------------------------- #
+    # Notify when the UPS is overloaded                       #
+    # ------------------------------------------------------- #
+  - alias: 'UPS overload notification'
+    trigger:
+      - platform: state
+        entity_id: sensor.nut_ups_status_data
+        to: 'OVER'
+    action:
+      - service: notify.eelco
+        data:
+          title: '*UPS notificatie*'
+          message: 'UPS is overloaded!'
+

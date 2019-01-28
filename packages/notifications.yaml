@@ -1,0 +1,46 @@
+# --------------------------------------------------------------------------- #
+# Telegram Bot                                                                #
+# --------------------------------------------------------------------------- #
+telegram_bot:
+  platform: broadcast
+  api_key: !secret telegram_bot_api_key
+  allowed_chat_ids:
+    - !secret telegram_chat_id
+
+# --------------------------------------------------------------------------- #
+# Notifications                                                               #
+# --------------------------------------------------------------------------- #
+notify:
+  - name: Mail
+    platform: smtp
+    server: !secret smtp_server
+    port: 465
+    encryption: tls
+    username: !secret smtp_username
+    password: !secret smtp_password
+    sender: !secret smtp_sender
+    sender_name: Home Assistant - EelCapone's place
+    recipient: !secret smtp_recipient
+  - name: Telegram
+    platform: telegram
+    api_key: !secret telegram_bot_api_key
+    chat_id: !secret telegram_chat_id
+  - name: Jabber
+    platform: xmpp
+    sender: !secret xmpp_sender
+    password: !secret xmpp_password
+    recipient: !secret xmpp_recipient
+  - name: livingroom_tv
+    platform: webostv
+    host: !secret ip_mp_tv_lq
+    filename: ../webostv.conf
+
+# --------------------------------------------------------------------------- #
+# Group notifications                                                         #
+# --------------------------------------------------------------------------- #
+  - name: eelco
+    platform: group
+    services:
+      - service: telegram
+      - service: livingroom_tv
+

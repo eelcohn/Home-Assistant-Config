@@ -1,0 +1,6 @@
+panel_iframe:
+  traccar:
+    title: Traccar
+    icon: mdi:car-connected
+    url: !secret traccar_url
+

@@ -1,0 +1,70 @@
+homeassistant:
+  name:        !secret location_name
+  latitude:    !secret location_latitude
+  longitude:   !secret location_longitude
+  elevation:   !secret location_elevation
+  unit_system: metric
+  time_zone:   Europe/Amsterdam
+  packages:    !include_dir_named packages
+
+http:
+  use_x_forwarded_for: true
+  ip_ban_enabled: false
+  login_attempts_threshold: 7
+  trusted_proxies:
+    - 127.0.0.1
+    - ::1
+  trusted_networks:
+    - 127.0.0.1
+    - ::1
+    - !secret ip_network_local
+    - !secret ip_network_vpn
+    - fd00::/8
+  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+  # base_url: example.duckdns.org:8123
+
+# Enables the frontend
+frontend:
+  javascript_version: latest
+  themes: !include_dir_named themes
+
+lovelace:
+  mode: yaml
+
+map:
+logbook:
+history:
+config:
+
+zone: !include zones.yaml
+
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+custom_updater: !include custom_updater.yaml
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Text to speech
+tts:
+  - platform: google
+#  - language: nl
+#  - cache_dir: ./cache/tts/
+
+hue:
+  bridges:
+    - host: !secret ip_huebridge
+      allow_unreachable: true
+      allow_hue_groups: false
+
+#light:
+#  - platform: hue
+#    host:     !secret ip_huebridge
+
+wake_on_lan:
+

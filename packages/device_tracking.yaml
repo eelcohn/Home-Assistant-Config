@@ -1,0 +1,40 @@
+device_tracker:
+  - platform: nmap_tracker
+    hosts:
+      - !secret ip_network_local
+    interval_seconds: 60
+    new_device_defaults:
+      track_new_devices: false
+      hide_if_away: false
+  - platform: traccar
+    host: 192.168.111.1
+    username: !secret traccar_username
+    password: !secret traccar_password
+
+#  - platform: ddwrt
+#    host: !secret ip_router_ddwrt
+#    username: !secret ddwrt_username
+#    password: !secret ddwrt_password
+#  - platform: fritz
+#    host: !secret ip_router_fritzbox
+#    username: !secret fritz_username
+#    password: !secret fritz_password
+
+group:
+  device_tracking:
+    name: Device tracking
+    entities:
+      - device_tracker.eelco_phone
+      - device_tracker.eelco_phone_work
+      - device_tracker.living_quarters_tv
+      - device_tracker.living_quarters_amp
+      - device_tracker.playstation4
+      - device_tracker.roomba_livingquarters
+      - device_tracker.router_asus_rtac66u
+      - device_tracker.master_bedroom_amp
+      - device_tracker.reesdice
+      - device_tracker.laptop
+      - device_tracker.tablet
+      - device_tracker.riscospi
+      - device_tracker.hue_bridge
+

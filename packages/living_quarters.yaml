@@ -1,0 +1,22 @@
+media_player:
+  - platform: denonavr
+    host: !secret ip_mp_amp_lq
+    name: Livingroom Amp
+    show_all_sources: true
+  - platform: webostv
+    host: !secret ip_mp_tv_lq
+    name: Livingroom TV
+
+homeassistant:
+  customize:
+    media_player.livingroom_tv:
+      icon: mdi:television
+
+group:
+  woonkamer:
+    name: "Livingroom"
+    entities:
+      - media_player.livingroom_tv
+      - media_player.livingroom_amp
+      - vacuum.roomba_living_quarters
+
