@@ -35,6 +35,20 @@
 !scripts
 !themes
 
+# Allow www/local files
+!www/**
+!www/deliveries/*
+!www/lovelace/*
+!www/lovelace/compact-custom-header/*
+!www/lovelace/tracker-card-master/*
+!www/lovelace/mijnafvalwijzer/*
+
+# Personal photo's and floorplans
+www/accounts/*
+
+# Allow custom components
+!custom_components/**
+
 # Ignore Sensitive Files
 secrets.yaml
 known_devices.yaml
@@ -95,10 +109,6 @@ __pycache__
 
 
 
-
-# Personal photo's and floorplans
-www/icons
-www/floorplans
 
 # Other
 *.conf
