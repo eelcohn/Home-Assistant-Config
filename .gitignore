@@ -34,14 +34,7 @@
 !scenes
 !scripts
 !themes
-
-# Allow www/local files
-!www/**
-!www/deliveries/*
-!www/lovelace/*
-!www/lovelace/compact-custom-header/*
-!www/lovelace/tracker-card-master/*
-!www/lovelace/mijnafvalwijzer/*
+!www
 
 # Personal photo's and floorplans
 www/accounts/*
@@ -54,7 +47,7 @@ secrets.yaml
 known_devices.yaml
 entity_registry.yaml
 ip_bans.yaml
-secrets
+secrets.yaml
 phue*.conf
 lgwebos*.conf
 .uuid
@@ -115,9 +108,7 @@ __pycache__
 
 home-assistant.env
 home-assistant.*
-known_devices.yaml
 entity_registry.yaml
-secrets.yaml
 google_calendars.yaml
 
 *.noload
