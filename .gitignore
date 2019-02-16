@@ -5,6 +5,10 @@
 # Share this file
 !.gitignore
 
+
+# Allow Home Assistant version info
+!.HA_VERSION
+
 # Share Markdown files & images
 !*.md
 !docs/images/*.png
