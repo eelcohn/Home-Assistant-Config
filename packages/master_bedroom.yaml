@@ -314,7 +314,7 @@ script:
         data:
           entity_id: media_player.master_bedroom_amp
           media_content_type: music
-          media_content_id: "http://192.168.111.1:8123/local/Wake_Up_fade_in.mp3"
+          media_content_id: !secret wakeup_media
       - delay:
           seconds: 150
       - service: media_player.volume_set

@@ -1,6 +1,6 @@
 sensor:
   - platform: rdw
-    name: "Seat Leon"
+    name: !secret car_name
     plate: !secret licenseplate
     sensors:
       - expdate
@@ -13,7 +13,7 @@ sensor:
 
 group:
   car_seat_leon:
-    name: "Seat Leon"
+    name: !secret car_name
     entities:
       - sensor.seat_leon_expdate
       - sensor.seat_leon_insured

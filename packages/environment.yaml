@@ -22,7 +22,7 @@ air_quality:
 #    station_id: NL10937
 
 openuv:
-  api_key: a0f955f9b23b61eddfd98028adcc08d2
+  api_key: !secret key_openuv_api
   binary_sensors:
     monitored_conditions:
       - uv_protection_window
