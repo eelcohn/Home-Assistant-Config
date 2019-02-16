@@ -65,6 +65,15 @@ sensor:
           {% set battery_seconds = ((states.sensor.nut_ups_battery_runtime.state | default(0) | int) % 60)   | int %}
             {{ battery_hours }}h {{ battery_minutes }}m {{ battery_seconds }}s
 
+# temp sensor; remove when smart gas meter is installed
+  - platform: template
+    sensors:
+      gas_consumption:
+        icon_template: mdi:fire
+        unit_of_measurement: m³
+        value_template: 0
+
+
 group:
   power:
     name: "Power"

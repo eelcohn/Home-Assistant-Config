@@ -1,0 +1,14 @@
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: processor_use
+      - type: memory_use
+
+group:
+  systemmonitor:
+    name: "System monitor"
+    control: hidden
+    entities:
+      - sensor.processor_use
+      - sensor.memory_use
+

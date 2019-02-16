@@ -1,0 +1,13 @@
+zone:
+- name: Home
+  latitude: !secret location_latitude
+  longitude: !secret location_longitude
+  icon: mdi:home
+  radius: 250
+
+- name: !secret zone1_name
+  latitude: !secret zone1_latitude
+  longitude: !secret zone1_longitude
+  icon: mdi:server-network
+  radius: 250
+

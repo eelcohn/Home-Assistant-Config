@@ -1,6 +1,6 @@
 panel_iframe:
   traccar:
     title: Traccar
-    icon: mdi:car-connected
+    icon: mdi:map-marker
     url: !secret traccar_url
 

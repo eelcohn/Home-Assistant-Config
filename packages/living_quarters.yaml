@@ -6,6 +6,7 @@ media_player:
   - platform: webostv
     host: !secret ip_mp_tv_lq
     name: Livingroom TV
+    filename: ./cache/webostv.conf
 
 homeassistant:
   customize:
@@ -16,7 +17,32 @@ group:
   woonkamer:
     name: "Livingroom"
     entities:
+      - light.hue_white_light_1
       - media_player.livingroom_tv
       - media_player.livingroom_amp
       - vacuum.roomba_living_quarters
+
+automation:
+# ------------------------------------------------------- #
+# Turn on lights when coming home at night                #
+# ------------------------------------------------------- #
+- alias: 'Auto lights at night'
+  trigger:
+    - platform: state
+      entity_id: device_tracker.eelcapone
+      from: 'not_home'
+      to: 'home'
+  condition:
+    - condition: numeric_state
+      entity_id: sun.sun
+      value_template: '{{ state.attributes.elevation }}'
+      below: -3.0
+    - condition: state
+      entity_id: 'light.hue_white_light_1'
+      state: 'off'
+  action:
+    - service: light.turn_on
+      data:
+        entity_id: 'light.hue_white_light_1'
+        brightness: 50
 

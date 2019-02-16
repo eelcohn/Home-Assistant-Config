@@ -10,6 +10,7 @@ homeassistant:
 zwave:
   usb_path: !secret dev_zwave
   network_key: !secret zwave_key
+#  config_path: /config/cache/zwave/
   autoheal: true
 
 

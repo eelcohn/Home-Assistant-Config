@@ -1,0 +1,5 @@
+tts:
+  - platform: google
+    language: nl
+    cache_dir: /config/cache/tts/
+

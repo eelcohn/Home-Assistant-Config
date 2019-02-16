@@ -1,0 +1,18 @@
+custom_updater:
+  track:
+    - cards
+    - components
+    - python_scripts
+  card_urls:
+    - https://raw.githubusercontent.com/kalkih/mini-media-player/master/tracker.json
+  component_urls:
+    - https://raw.githubusercontent.com/eelcohn/home-assistant-rdw/master/custom_updater.json
+    - https://raw.githubusercontent.com/xirixiz/home-assistant-config/master/custom_updater.json
+
+group:
+  custom_updater:
+    entities:
+      - sensor.custom_card_tracker
+      - sensor.custom_component_tracker
+      - sensor.custom_python_script_tracker
+

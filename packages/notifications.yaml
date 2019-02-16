@@ -19,7 +19,7 @@ notify:
     username: !secret smtp_username
     password: !secret smtp_password
     sender: !secret smtp_sender
-    sender_name: Home Assistant - EelCapone's place
+    sender_name: !secret location_name
     recipient: !secret smtp_recipient
   - name: Telegram
     platform: telegram
@@ -33,7 +33,7 @@ notify:
   - name: livingroom_tv
     platform: webostv
     host: !secret ip_mp_tv_lq
-    filename: ../webostv.conf
+    filename: ./cache/webostv.conf
 
 # --------------------------------------------------------------------------- #
 # Group notifications                                                         #

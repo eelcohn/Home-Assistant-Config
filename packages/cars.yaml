@@ -9,7 +9,7 @@ sensor:
   - platform: template
     sensors:
       seat_leon_apk:
-          value_template: "{{ as_timestamp(states('sensor.seat_leon_expdate')).strftime('%d %m %Y') }}"
+          value_template: "{{ as_timestamp( strptime(states('sensor.seat_leon_expdate'), '%Y-%m-%d') ) | timestamp_custom('%a %d %b %Y') }}"
 
 group:
   car_seat_leon:
@@ -18,6 +18,7 @@ group:
       - sensor.seat_leon_expdate
       - sensor.seat_leon_insured
       - sensor.seat_leon_recall
+      - sensor.seat_leon_apk
 
 homeassistant:
   customize:
@@ -35,7 +36,7 @@ automation:
   - alias: APK date expiration notification
     trigger:
       - platform: template
-        value_template: "{{ (as_timestamp(states('sensor.seat_leon_expdate')) + timedelta(days=30)) == as_timestamp(states('sensor.date')) }}"
+        value_template: "{{ (as_timestamp(strptime(states('sensor.seat_leon_expdate'), '%Y-%m-%d')) + (86400 * 22) == as_timestamp(strptime(states('sensor.date'), '%Y-%m-%d'))) }}"
     action:
       - service: notify.eelco
         data_template:
@@ -46,7 +47,6 @@ automation:
     # Notify when the car's insurance has expired             #
     # ------------------------------------------------------- #
   - alias: Insurance expiration notification
-    initial_state: True
     trigger:
       - platform: state
         entity_id: sensor.seat_leon_insured
@@ -61,7 +61,6 @@ automation:
     # Notify when a maintenance recall has been issued        #
     # ------------------------------------------------------- #
   - alias: Recall notification
-    initial_state: False
     trigger:
       - platform: state
         entity_id: sensor.seat_leon_recall

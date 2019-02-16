@@ -10,6 +10,7 @@ sensor:
     host: !secret ip_synologydsm
     username: !secret synology_username
     password: !secret synology_password
+    verify_ssl: false
     monitored_conditions:
       - cpu_total_load
       - memory_real_usage
@@ -21,6 +22,12 @@ sensor:
         query: !secret mariadb_sizequery
         column: 'value'
         unit_of_measurement: MB
+
+group:
+  network:
+    entities:
+      - sensor.database_size
+      - sensor.uptime
 
 homeassistant:
   customize:

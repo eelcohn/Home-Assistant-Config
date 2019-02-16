@@ -1,0 +1,4 @@
+#logger:
+#  logs:
+#    homeassistant.components.device_tracker: debug
+

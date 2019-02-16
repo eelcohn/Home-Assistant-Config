@@ -1,17 +1,9 @@
 """
 @ Authors     : Bram van Dartel
-@ Date        : 04/02/2019
+@ Date        : 13/01/2019
 @ Description : MijnAfvalwijzer Scrape Sensor - It queries mijnafvalwijzer.nl.
-
-sensor:
-  - platform: mijnafvalwijzer
-    postcode: 1111AA
-    huisnummer: 1
-    toevoeging: A
-    label_geen: 'Geen'
 """
-
-VERSION = '2.0.6'
+VERSION = '2.0.4'
 
 import itertools
 import logging
@@ -28,7 +20,7 @@ from homeassistant.const import CONF_NAME
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import Throttle
 
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 DEFAULT_NAME = 'mijnafvalwijzer'
 DOMAIN = 'mijnafvalwijzer'
@@ -57,23 +49,24 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     postcode = config.get(CONST_POSTCODE)
     huisnummer = config.get(CONST_HUISNUMMER)
     toevoeging = config.get(CONST_TOEVOEGING)
-    url = (f"https://www.mijnafvalwijzer.nl/nl/{postcode}/{huisnummer}/{toevoeging}")
+    url = ("https://www.mijnafvalwijzer.nl/nl/{0}/{1}/{2}").format(postcode, huisnummer, toevoeging)
 
-    logger.debug(f"Request url: {url}")
     response = requests.get(url)
-    logger.debug(response.content)
-
     if response.status_code != requests.codes.ok:
-        logger.exception("Error doing API request")
+        _LOGGER.exception("Error doing API request")
     else:
-        logger.debug(f"API request ok {response.status_code}")
+        _LOGGER.debug("API request ok %d", response.status_code)
 
     soup = bs4.BeautifulSoup(response.text, "html.parser")
+    if len(soup) == 0:
+        _LOGGER.error("Respons doesn't contain data")
+    else:
+        _LOGGER.debug("Respons contains data")
 
     # Get trash shortname
     trashShortNames = []
     uniqueTrashShortNames = []
-    defaultTrashNames = ['firstdate', 'firstwastetype', 'today', 'tomorrow', 'next']
+    defaultTrashNames = ['today', 'tomorrow', 'next']
     uniqueTrashShortNames.extend(defaultTrashNames)
     sensors = []
     try:
@@ -85,8 +78,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     except IndexError:
         return 'Error, empty reply.'
 
-    logger.debug(f"trashShortNames succesfully added: {trashShortNames}")
-    logger.debug(f"uniqueTrashShortNames succesfully added: {uniqueTrashShortNames}")
+    _LOGGER.debug("trashShortNames succesfully added: %s", trashShortNames)
+    _LOGGER.debug("uniqueTrashShortNames succesfully added: %s", uniqueTrashShortNames)
 
     data = (TrashCollectionSchedule(url, defaultTrashNames ,config))
 
@@ -97,7 +90,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     except IndexError:
         return 'Error, empty reply.'
 
-    logger.debug(f"Object succesfully added as sensor(s): {sensors}")
+    _LOGGER.debug("Object succesfully added as sensor(s): %s", sensors)
 
 
 class TrashCollectionSensor(Entity):
@@ -129,7 +122,7 @@ class TrashCollectionSensor(Entity):
         self.data.update()
         self._state = self.config.get(CONST_LABEL_NONE)
 
-        logger.debug("Update called for mijnafvalwijzer...")
+        _LOGGER.debug("Update called for mijnafvalwijzer...")
 
         try:
             for item in self.data.data:
@@ -153,15 +146,15 @@ class TrashCollectionSchedule(object):
         """Fetch new state data for the sensor."""
         response = requests.get(self.url)
         if response.status_code != requests.codes.ok:
-            logger.exception("Error doing API request")
+            _LOGGER.exception("Error doing API request")
         else:
-            logger.debug(f"API request ok {response.status_code}")
+            _LOGGER.debug("API request ok %d", response.status_code)
 
         soup = bs4.BeautifulSoup(response.text, "html.parser")
         if len(soup) == 0:
-            logger.error("Respons doesn't contain data")
+            _LOGGER.error("Respons doesn't contain data")
         else:
-            logger.debug("Respons contains data")
+            _LOGGER.debug("Respons contains data")
 
         today = datetime.today().strftime("%d-%m-%Y")
         today_date = datetime.strptime(today, "%d-%m-%Y")
@@ -203,9 +196,7 @@ class TrashCollectionSchedule(object):
         for item in soup.select('[class="ophaaldagen"]'):
             year_id = item["id"]
         year = re.sub('jaar-','',year_id)
-        logger.debug(f"Year found: {year}")
-        if len(year) == 0:
-            year = '0000'
+        _LOGGER.debug("Year found: %s", year)
 
         # Get trash dump
         trashDump = []
@@ -219,7 +210,7 @@ class TrashCollectionSchedule(object):
                 name = data.get_text()
                 trashDump.append(name)
                 trashDump.append(x)
-                logger.debug(f"Trash scraped from website: {trashDump}")
+                _LOGGER.debug("Trash scraped from website: %s", trashDump)
         except IndexError:
             return 'Error, empty reply.'
 
@@ -227,7 +218,7 @@ class TrashCollectionSchedule(object):
         uniqueTrashDates = [i.split('\n', 1) for i in trashDump]
         uniqueTrashDates = list(itertools.chain.from_iterable(uniqueTrashDates))
         uniqueTrashDates = [uniqueTrashDates[i:i+3]for i in range(0,len(uniqueTrashDates),3)]
-        logger.debug(f"Trash dates conversion output from scraped website data: {uniqueTrashDates}")
+        _LOGGER.debug("Trash dates conversion output from scraped website data: %s", uniqueTrashDates)
 
         try:
             for item in uniqueTrashDates:
@@ -235,15 +226,16 @@ class TrashCollectionSchedule(object):
                 day = split_date[1]
                 month_name = split_date[2]
                 month = _get_month_number(month_name)
-                logger.debug(f"Converting month name: {month_name} to month number {month}")
+                _LOGGER.debug("Converting month name: %s to month number %s", month_name, month)
                 trashDump = {}
                 trashDump['key'] = item[2]
                 trashDump['description'] = item[1]
                 trashDump['value'] = day + '-' + month + '-' + year
                 json_data.append(trashDump)
-                logger.debug(f"New generated dictionairy with converted dates: {json_data}")
+                _LOGGER.debug("New generated dictionairy with converted dates: %s", json_data)
         except IndexError:
             return 'Error, empty reply.'
+
 
         # Append first upcoming unique trash item with pickup date
         uniqueTrashNames = []
@@ -262,17 +254,18 @@ class TrashCollectionSchedule(object):
                         trash['value'] = value
                         uniqueTrashNames.append(key)
                         trashSchedule.append(trash)
-                        logger.debug(f"New dictionairy with update data: {trashSchedule}")
+                        _LOGGER.debug("New dictionairy with update data: %s", trashSchedule)
         except IndexError:
             return 'Error, empty reply.'
 
-        # Collect data for today, tomorrow and next
+
+        # Collect data
         today_out = [x for x in trashSchedule if datetime.strptime(x['value'], "%d-%m-%Y") == today_date]
-        logger.debug(f"Trash Today: {today_out}")
+        _LOGGER.debug("Trash Today: %s", today_out)
         tomorrow_out = [x for x in trashSchedule if datetime.strptime(x['value'], "%d-%m-%Y") == tomorrow_date]
-        logger.debug(f"Trash Tomorrow: {tomorrow_out}")
+        _LOGGER.debug("Trash Tomorrow: %s", tomorrow_out)
         next_out = [x for x in trashSchedule if datetime.strptime(x['value'], "%d-%m-%Y") > today_date]
-        logger.debug(f"Trash Next Pickup Day: {next_out}")
+        _LOGGER.debug("Trash Next Pickup Day: %s", next_out)
 
         # Append Today data
         trashToday = {}
@@ -282,7 +275,7 @@ class TrashCollectionSchedule(object):
             trashToday['description'] = 'Trash Today'
             trashToday['value'] = labelNone
             trashSchedule.append(trashToday)
-            logger.debug("Today contains no data, skipping...")
+            _LOGGER.debug("Today contains no data, skipping...")
         else:
             try:
                 for x in today_out:
@@ -291,9 +284,10 @@ class TrashCollectionSchedule(object):
                     multiTrashToday.append(x['key'])
                 trashSchedule.append(trashToday)
                 trashToday['value'] = ', '.join(multiTrashToday)
-                logger.debug(f"Today data succesfully added {trashToday}")
+                _LOGGER.debug("Today data succesfully added %s", trashToday)
             except IndexError:
                 return 'Error, empty reply.'
+
 
         # Append Tomorrow data
         trashTomorrow = {}
@@ -303,7 +297,7 @@ class TrashCollectionSchedule(object):
             trashTomorrow['description'] = 'Trash Tomorrow'
             trashTomorrow['value'] = labelNone
             trashSchedule.append(trashTomorrow)
-            logger.debug("Tomorrow contains no data, skipping...")
+            _LOGGER.debug("Tomorrow contains no data, skipping...")
         else:
             try:
                 for x in tomorrow_out:
@@ -312,9 +306,10 @@ class TrashCollectionSchedule(object):
                     multiTrashTomorrow.append(x['key'])
                 trashSchedule.append(trashTomorrow)
                 trashTomorrow['value'] = ', '.join(multiTrashTomorrow)
-                logger.debug(f"Today data succesfully added {trashTomorrow}")
+                _LOGGER.debug("Today data succesfully added %s", trashTomorrow)
             except IndexError:
                 return 'Error, empty reply.'
+
 
         # Append next pickup in days
         trashNext = {}
@@ -329,27 +324,15 @@ class TrashCollectionSchedule(object):
             trashNext['key'] = 'next'
             trashNext['value'] = labelNone
             trashSchedule.append(trashNext)
-            logger.debug("Next contains no data, skipping...")
+            _LOGGER.debug("Next contains no data, skipping...")
         else:
             if len(trashNext) == 0:
                 trashNext['key'] = 'next'
                 trashNext['value'] = (days(today, next_out[0]['value']))
                 trashSchedule.append(trashNext)
-                logger.debug(f"Next data succesfully added {trashNext}")
+                _LOGGER.debug("Next data succesfully added %s", trashNext)
 
-        # Append firstDate and firstWasteType
-        trashFirstDate = {}
-        trashFirstDate['key'] = 'firstdate'
-        trashFirstDate['value'] = soup.find('p', attrs={'class':'firstDate'}).text
-        trashSchedule.append(trashFirstDate)
-        logger.debug(f"firstDate data succesfully added {trashFirstDate}")
-
-        firstWasteType = {}
-        firstWasteType['key'] = 'firstwastetype'
-        firstWasteType['value'] = soup.find('p', attrs={'class':'firstWasteType'}).text
-        trashSchedule.append(firstWasteType)
-        logger.debug(f"firstDate data succesfully added {firstWasteType}")     
 
         # Return collected data
-        logger.debug(f"trashSchedule content {trashSchedule}")
+        _LOGGER.debug("trashSchedule content %s", trashSchedule)
         self.data = trashSchedule

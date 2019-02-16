@@ -1,0 +1,42 @@
+sun:
+
+sensor:
+  - platform: moon
+  - platform: season
+    type: astronomical
+  - platform: template
+    sensors:
+      day_night:
+        friendly_name: Sun
+        value_template: "{% if is_state('sun.sun', 'above_horizon') %} Up {% else %} Down {% endif %}"
+        icon_template: "{% if is_state('sun.sun', 'above_horizon') %} mdi:weather-sunny {% else %} mdi:weather-night {% endif %}"
+  - platform: template
+    sensors:
+      sunrise:
+        value_template: "{{ as_timestamp(states.sun.sun.attributes.next_rising) | timestamp_custom('%H:%M') }}"
+  - platform: template
+    sensors:
+      sunset:
+        value_template: "{{ as_timestamp(states.sun.sun.attributes.next_setting) | timestamp_custom('%H:%M') }}"
+
+homeassistant:
+  customize:
+    sensor.sunrise:
+      friendly_name: "Sunrise"
+      icon: mdi:weather-sunset-up
+    sensor.sunset:
+      friendly_name: "Sunset"
+      icon: mdi:weather-sunset-down
+
+group:
+  astronomy:
+    name: "Astronomy"
+    entities:
+      - sensor.day_night
+      - sensor.moon
+      - sensor.season
+      - sensor.sunrise
+      - sensor.sunset
+      - sun.sun
+      - sun.above_horizon
+

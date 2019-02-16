@@ -28,6 +28,12 @@ input_boolean:
     icon: mdi:clock-outline
     initial: 'on'
 
+binary_sensor:
+  - platform: workday
+    name: vacuum_days
+    country: NL
+    workdays: [tue, fri]
+
 sensor:
   - platform: template
     sensors:
@@ -42,6 +48,7 @@ group:
   vacuum:
     name: "Robot Vacuumers"
     entities:
+      - binary_sensor.vacuum_days
       - sensor.housecleaning_time
       - vacuum.roomba_living_quarters
 
@@ -57,6 +64,9 @@ automation:
   condition:
     - condition: template
       value_template: "{{ is_state('input_boolean.housecleaning_activated', 'on') }}"
+    - condition: state
+      entity_id: 'binary_sensor.vacuum_days'
+      state: 'on'
     - condition: template
       value_template: "{{ states('sensor.time') == states('sensor.housecleaning_time') }}"
     - condition: template

@@ -7,9 +7,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="2500"
-   height="2500"
-   viewBox="0 0 46.986 46.989028"
+   width="1000"
+   height="1000"
+   viewBox="0 0 18.7944 18.795611"
    version="1.1"
    id="svg10"
    sodipodi:docname="postnl.svg"
@@ -42,21 +42,21 @@
      id="namedview12"
      showgrid="false"
      inkscape:zoom="0.2092504"
-     inkscape:cx="-657.52112"
-     inkscape:cy="1047.5977"
+     inkscape:cx="-1632.4297"
+     inkscape:cy="1028.4818"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg10" />
   <path
-     d="M 0,0 H 46.989028 V 46.989028 H 0 Z"
+     d="M 0,2e-7 H 18.795611 V 18.795611 H 0 Z"
      id="path2"
      inkscape:connector-curvature="0"
-     style="fill:#f29839;stroke-width:1.25199711;fill-opacity:1" />
+     style="fill:#f29839;fill-opacity:1;stroke-width:0.50079882" />
   <g
      id="g6"
      style="fill:#ffffff;fill-opacity:0.94117647"
-     transform="matrix(0.17735629,0,0,0.17735626,-13.933167,-4.9227921)">
+     transform="matrix(0.07094252,0,0,0.0709425,-5.5732668,-1.9691168)">
     <path
        d="M 240.639,95.872 C 216.816,82.737 181.029,68.6 158.754,68.6 c -5.844,0 -10.551,0.963 -13.988,2.854 -8.32,4.59 -15.277,16.968 -20.131,35.81 -4.027,15.662 -6.342,34.931 -6.342,52.86 0,35.681 8.285,78.646 26.473,88.679 3.721,2.051 8.699,3.094 14.799,3.094 23.014,0 58.055,-14.824 81.074,-27.517 25.354,-13.979 63.074,-42.622 63.113,-64.256 -0.035,-20.33 -36.922,-49.81 -63.113,-64.252 m -2.993,124.024 c -36.54,20.146 -75.346,31.727 -89.596,23.881 -15.713,-8.67 -23.582,-50.099 -23.586,-83.1 0.004,-32.745 8.357,-74.694 23.586,-83.095 13.367,-7.373 53.942,4.217 89.596,23.874 30.899,17.041 59.906,43.775 59.932,59.221 -0.029,16.192 -28.545,41.914 -59.932,59.219"
        id="path2-3"

@@ -15,35 +15,4 @@ script:
               entity_id: vacuum.roomba_living_quarters
               command: app_goto_target
               params: [23500,23500]
-  bedroom_amp_start_media:
-    alias: "temp debug Bedroom amp start media play"
-    sequence:
-      - service: media_player.turn_on
-        data:
-          entity_id: media_player.master_bedroom_amp
-      - delay:
-          seconds: 5
-      - service: media_player.select_source
-        data:
-          entity_id: media_player.master_bedroom_amp
-          source: USB
-      - delay:
-          seconds: 5
-      - service: media_player.volume_set
-        data:
-          entity_id: media_player.master_bedroom_amp
-          volume_level: 0.06
-      - delay:
-          seconds: 5
-      - service: media_player.play_media
-        entity_id: media_player.master_bedroom_amp
-        data:
-          media_content_type: 'music'
-          media_content_id: 'wakeup.mp3'
-      - delay:
-          seconds: 900
-      - service: media_player.select_source
-        data:
-          entity_id: media_player.master_bedroom_amp
-          source: FM
 

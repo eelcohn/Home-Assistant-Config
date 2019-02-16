@@ -1,7 +1,7 @@
 resources:
   - url: /local/lovelace/mini-media-player-bundle.js
     type: module
-  - url: /local/lovelace/compact-custom-header/compact-custom-header.js?v=0.2.8
+  - url: /local/lovelace/compact-custom-header/compact-custom-header.js?v=0.2.9
     type: js
   - url: /local/lovelace/tracker-card-master/tracker-card.js?v0
     type: js
@@ -43,13 +43,12 @@ views:
             name: Huidig stroomverbruik
             graph: line
             detail: 2
-            unit: kWh
-            icon: mdi:flash
           - type: entities
             id: card-power
             title: Power
             show_header_toggle: false
             entities:
+              - sensor.power_consumption
               - sensor.power_tariff
               - sensor.power_consumption_normal
               - sensor.power_consumption_low
@@ -71,8 +70,6 @@ views:
             name: Huidig gasverbruik
             graph: line
             detail: 2
-            icon: mdi:flash
-            unit: m³/h
           - type: history-graph
             id: history-gas
             title: 'Gasverbruik'
@@ -85,21 +82,21 @@ views:
           cards:
             - type: conditional
               conditions:
-                - entity: sensor.trash_today
+                - entity: sensor.trash_today_desc
                   state_not: "Geen"
               card:
                 type: picture-entity
-                entity: sensor.trash_today
-                name: Vandaag wordt het {{ states.sensor.trash_today.state }} opgehaald
+                entity: sensor.trash_today_desc
+                name: sensor.trash_today_desc
                 <<: *afval-images
             - type: conditional
               conditions:
-                - entity: sensor.trash_tomorrow
+                - entity: sensor.trash_tomorrow_desc
                   state_not: "Geen"
               card:
                 type: picture-entity
-                entity: sensor.trash_tomorrow
-                name: Morgen wordt het {{ states.sensor.trash_tomorrow.state }} opgehaald
+                entity: sensor.trash_tomorrow_desc
+                name: sensor.trash_tomorrow_desc
                 <<: *afval-images
         - type: glance
           title: Afvalkalender
@@ -116,6 +113,7 @@ views:
             - sensor.dpd
             - sensor.dhl
             - sensor.fedex
+            - sensor.gls
             - sensor.postnl
             - sensor.ups
             - sensor.usps
@@ -133,21 +131,27 @@ views:
             name: Weather Forecast
             entity: weather.buienradar
           - type: glance
-            name: Environment
+            title: Environment
             entities:
               - sensor.current_uv_index
               - sensor.max_uv_index
               - sensor.current_ozone_level
-#              - sensor.luftdaten_16904_p1
-#              - sensor.luftdaten_16904_p2
+              - sensor.waqi_nijensteinheerd_groningen
           - type: glance
-            name: Sun & Moon
+            title: Sun & Moon
             entities:
-              - sensor.day_night
               - sensor.sunrise
               - sensor.sunset
+              - sensor.day_night
               - sensor.moon
               - sensor.season
+      - type: vertical-stack
+        title: Weather radar
+        cards:
+          - type: picture-entity
+            entity: camera.knmi_weatherradar
+            show_name: false
+            show_state: false
           - type: picture-entity
             entity: camera.buienradar_forecast
             show_name: false
@@ -155,13 +159,8 @@ views:
       - type: vertical-stack
         title: Climate Control
         cards:
-          - type: entities
-            title: Climate Control
-            show_header_toggle: false
-            entities:
-              - climate.ecobee
-              - climate.heatpump
-              - climate.hvac
+          - type: thermostat
+            entity: climate.ecobee
           - type: history-graph
             id: history-temperature
             title: 'Temperature'
@@ -176,6 +175,10 @@ views:
     cards:
       - type: vertical-stack
         cards:
+          - type: glance
+            title: Master Bedroom
+            entities:
+              - light.hue_white_light_1
           - type: entities
             title: Media Players
             show_header_toggle: false
@@ -216,11 +219,13 @@ views:
     cards:
       - type: vertical-stack
         cards:
-          - type: light
+          - type: glance
             title: Master Bedroom
-            entity: light.masterbedroom
+            entities:
+              - light.masterbedroom
           - type: entities
-            title: Wake-up light
+            title: Wake-up alarm clock
+            show_header_toggle: false
             entities:
               - sensor.alarm_time
               - input_boolean.bedroom_alarm_clock_enabled
@@ -287,13 +292,15 @@ views:
           - type: glance
             title: People
             entities:
-              - device_tracker.eelco_phone
-              - device_tracker.eelco_phone_work
+              - device_tracker.eelcapone
+              - device_tracker.eelcapone_work
+              - device_tracker.eelcapone_tablet
       - type: map
         default_zoom: 14
         entities:
-          - device_tracker.eelco_phone
-          - device_tracker.eelco_phone_work
+          - device_tracker.eelcapone
+          - device_tracker.eelcapone_work
+          - device_tracker.eelcapone_tablet
           - zone.home
       - <<: *compact-header
 
@@ -320,6 +327,8 @@ views:
           - type: glance
             title: Network Devices
             entities:
+#              - sensor.processor_use
+#              - sensor.memory_use
               - sensor.uptime
               - sensor.database_size
               - sensor.fritzbox

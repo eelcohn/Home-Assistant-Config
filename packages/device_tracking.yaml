@@ -1,13 +1,14 @@
 device_tracker:
   - platform: nmap_tracker
     hosts:
-      - !secret ip_network_local
+#      - !secret ip_network_local
+      - !secret ip_phone_e
     interval_seconds: 60
     new_device_defaults:
       track_new_devices: false
       hide_if_away: false
   - platform: traccar
-    host: 192.168.111.1
+    host: !secret traccar_ip
     username: !secret traccar_username
     password: !secret traccar_password
 
@@ -20,12 +21,22 @@ device_tracker:
 #    username: !secret fritz_username
 #    password: !secret fritz_password
 
+proximity:
+  home:
+    ignored_zones:
+      - !secret zone1_name
+    devices:
+      - device_tracker.eelcapone
+    tolerance: 100
+    unit_of_measurement: km
+
 group:
   device_tracking:
     name: Device tracking
     entities:
-      - device_tracker.eelco_phone
-      - device_tracker.eelco_phone_work
+      - device_tracker.eelcapone
+      - device_tracker.eelcapone_work
+      - device_tracker.eelcapone_tablet
       - device_tracker.living_quarters_tv
       - device_tracker.living_quarters_amp
       - device_tracker.playstation4
@@ -37,4 +48,31 @@ group:
       - device_tracker.tablet
       - device_tracker.riscospi
       - device_tracker.hue_bridge
+      - proximity.home
+
+automation:
+  - alias: Notify when going away
+    trigger:
+      platform: state
+      entity_id: device_tracker.eelcapone
+      from: 'home'
+    action:
+      - service: notify.eelco
+        data_template:
+          title: '*Tracking notificatie*'
+          message: Je bent zojuist vertrokken van huis.
+  - alias: Notify when going home
+    trigger:
+      platform: numeric_state
+      entity_id: proximity.home
+      below: 7
+      for: '00:01:00'
+    condition:
+      condition: template
+      value_template: '{{ state_attr("proximity.home", "dir_of_travel") == "towards" }}'
+    action:
+      - service: notify.eelco
+        data_template:
+          title: '*Tracking notificatie*'
+          message: Je komt zometeen thuis, ik heb de verwarming alvast aangezet.
 

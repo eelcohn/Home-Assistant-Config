@@ -2,6 +2,9 @@
 #    username: !secret usps_username
 #    password: !secret usps_password
 
+#deliveries:
+#  - platform: demo
+
 sensor:
 #  - platform: fedex
 #    username: !secret fedex_username
@@ -22,12 +25,14 @@ sensor:
             if  ((attribute != 'attribution') and (attribute != 'unit_of_measurement') and (attribute != 'friendly_name') and (attribute != 'icon') and (attribute != 'entity_picture')) %}
               {{attribute}} : {{states.sensor.postnl.attributes[attribute] }}
           {%-endfor%}
+# Temporary placeholder; will be replaced when this sensor is implemented
   - platform: template
     sensors:
       dpd:
         icon_template: mdi:package-variant-closed
         unit_of_measurement: packages
         value_template: 0
+# Temporary placeholder; will be replaced when this sensor is implemented
   - platform: template
     sensors:
       dhl:
@@ -37,6 +42,13 @@ sensor:
   - platform: template
     sensors:
       fedex:
+        icon_template: mdi:package-variant-closed
+        unit_of_measurement: packages
+        value_template: 0
+# Temporary placeholder; will be replaced when this sensor is implemented
+  - platform: template
+    sensors:
+      gls:
         icon_template: mdi:package-variant-closed
         unit_of_measurement: packages
         value_template: 0
@@ -57,22 +69,25 @@ homeassistant:
   customize:
     sensor.dpd:
       friendly_name: "DPD"
-      entity_picture: /local/deliveries/dpd.svg
+      entity_picture: /local/deliveries/dpd1.svg
     sensor.dhl:
       friendly_name: "DHL"
-      entity_picture: /local/deliveries/dhl.svg
+      entity_picture: /local/deliveries/dhl3.svg
     sensor.fedex:
       friendly_name: "Fedex"
-      entity_picture: /local/deliveries/fedex.svg
+      entity_picture: /local/deliveries/fedex2.svg
+    sensor.gls:
+      friendly_name: "GLS"
+      entity_picture: /local/deliveries/gls1.svg
     sensor.postnl:
       friendly_name: "PostNL"
-      entity_picture: /local/deliveries/postnl.svg
+      entity_picture: /local/deliveries/postnl2.svg
     sensor.ups:
       friendly_name: "UPS"
-      entity_picture: /local/deliveries/ups.svg
+      entity_picture: /local/deliveries/ups1.svg
     sensor.usps:
       friendly_name: "USPS"
-      entity_picture: /local/deliveries/usps.svg
+      entity_picture: /local/deliveries/usps2.svg
 
 group:
   deliveries:
@@ -82,6 +97,7 @@ group:
       - sensor.dpd
       - sensor.dhl
       - sensor.fedex
+      - sensor.gls
       - sensor.postnl
       - sensor.ups
       - sensor.usps

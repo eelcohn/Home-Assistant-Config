@@ -19,11 +19,19 @@ sensor:
   - platform: template
     sensors:
       trash_papier_date:
-          value_template: '{{ as_timestamp( strptime(states.sensor.trash_papier.state, "%d-%m-%Y") ) | timestamp_custom("%a %d %b") }}'
+        value_template: '{{ as_timestamp( strptime(states.sensor.trash_papier.state, "%d-%m-%Y") ) | timestamp_custom("%a %d %b") }}'
   - platform: template
     sensors:
       trash_kerstbomen_date:
-          value_template: '{{ as_timestamp( strptime(states.sensor.trash_kerstbomen.state, "%d-%m-%Y") ) | timestamp_custom("%a %d %b") }}'
+        value_template: '{{ as_timestamp( strptime(states.sensor.trash_kerstbomen.state, "%d-%m-%Y") ) | timestamp_custom("%a %d %b") }}'
+  - platform: template
+    sensors:
+      trash_today_desc:
+        value_template: 'Vandaag wordt het {{ states("sensor.trash_firstwastetype") }} opgehaald.'
+  - platform: template
+    sensors:
+      trash_tomorrow_desc:
+        value_template: 'Morgen wordt het {{ states("sensor.trash_firstwastetype") }} opgehaald.'
 
 input_boolean:
   trash_reminders:
@@ -88,7 +96,11 @@ group:
       - sensor.trash_next
       - sensor.trash_today
       - sensor.trash_tomorrow
+      - sensor.trash_today_desc
+      - sensor.trash_tomorrow_desc
       - sensor.trash_reminders
+      - sensor.trash_firstdate
+      - sensor.trash_firstwastetype
 
 automation:
     # ------------------------------------------------------- #
@@ -111,5 +123,5 @@ automation:
       - service: notify.eelco
         data_template:
           title: '*Afvalnotificatie*'
-          message: Morgen wordt het {{ states.sensor.trash_tomorrow.state }} opgehaald. Zet het {{ states.sensor.trash_tomorrow.state }} bij de weg.
+          message: Morgen wordt het {{ states('sensor.trash_firstwastetype') }} opgehaald. Zet het {{ states('sensor.trash_firstwastetype') }} bij de weg.
 

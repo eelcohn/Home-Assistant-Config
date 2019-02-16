@@ -1,0 +1,75 @@
+sensor:
+  - platform: waqi
+    token: !secret waqi_apikey
+    locations:
+      - !secret waqi_location
+
+#luftdaten:
+#  sensor_id: !secret stn_luftdaten
+#  show_on_map: true
+#  sensors:
+#    monitored_conditions:
+#      - P1
+#      - P2
+#      - temperature
+#      - humidity
+#      - pressure
+
+air_quality:
+  - platform: opensensemap
+    station_id: !secret stn_air_quality
+#  - platform: luchtmeetnet
+#    station_id: NL10937
+
+openuv:
+  api_key: a0f955f9b23b61eddfd98028adcc08d2
+  binary_sensors:
+    monitored_conditions:
+      - uv_protection_window
+  sensors:
+    monitored_conditions:
+      - current_ozone_level
+      - current_uv_index
+      - max_uv_index
+
+homeassistant:
+  customize:
+    sensor.current_ozone_level:
+      friendly_name: "Ozon niveau"
+    sensor.current_uv_index:
+      friendly_name: "UV Index"
+    sensor.max_uv_index:
+      friendly_name: "Max UV Index"
+
+group:
+  environment:
+    name: "Environment"
+    entities:
+      - binary_sensor.protection_window
+      - sensor.current_ozone_level
+      - sensor.current_uv_index
+      - sensor.current_uv_level
+      - sensor.max_uv_index
+      - sensor.skin_type_1_safe_exposure_time
+      - sensor.skin_type_2_safe_exposure_time
+      - sensor.skin_type_3_safe_exposure_time
+      - sensor.skin_type_4_safe_exposure_time
+      - sensor.skin_type_5_safe_exposure_time
+      - sensor.skin_type_6_safe_exposure_time
+      - sensor.waqi_europaweg_groningen
+      - sensor.waqi_nijensteinheerd_groningen
+#      - sensor.luftdaten_16904_humidity
+#      - sensor.luftdaten_16904_p1
+#      - sensor.luftdaten_16904_p2
+#      - sensor.luftdaten_16904_pressure
+#      - sensor.luftdaten_16904_temperature
+
+automation:
+  - alias: Update OpenUV every hour (24 of 50 calls per day)
+    trigger:
+      platform: time_pattern
+      minutes: "/30"
+      seconds: 00
+    action:
+      service: openuv.update_data
+

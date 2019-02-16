@@ -1,5 +1,3 @@
-sun:
-
 weather:
   - platform: buienradar
     name: buienradar
@@ -21,75 +19,30 @@ weather:
 #      - temperature
 
 sensor:
-  - platform: moon
-  - platform: season
-    type: astronomical
-  - platform: yr
-    monitored_conditions:
-      - pressure
-      - symbol
-      - temperature
-      - windSpeed
-  - platform: buienradar
-    name: 'buienradar'
-    latitude: !secret location_latitude
-    longitude: !secret location_longitude
-    forecast: true
-  - platform: openweathermap
-    api_key: !secret key_openweathermap
-    monitored_conditions:
-      - weather
-      - temperature
-      - wind_speed
-      - wind_bearing
-      - humidity
-      - pressure
-      - clouds
-      - rain
-      - snow
-      - weather_code
-  - platform: template
-    sensors:
-      day_night:
-        friendly_name: Sun
-        value_template: "{% if is_state('sun.sun', 'above_horizon') %} Up {% else %} Down {% endif %}"
-        icon_template: "{% if is_state('sun.sun', 'above_horizon') %} mdi:weather-sunny {% else %} mdi:weather-night {% endif %}"
-  - platform: template
-    sensors:
-      sunrise:
-        value_template: "{{ as_timestamp(states.sun.sun.attributes.next_rising) | timestamp_custom('%H:%M') }}"
-  - platform: template
-    sensors:
-      sunset:
-        value_template: "{{ as_timestamp(states.sun.sun.attributes.next_setting) | timestamp_custom('%H:%M') }}"
-
-#luftdaten:
-#  sensor_id: !secret stn_luftdaten
-#  show_on_map: true
-#  sensors:
+#  - platform: yr
 #    monitored_conditions:
-#      - P1
-#      - P2
+#      - pressure
+#      - symbol
 #      - temperature
+#      - windSpeed
+#  - platform: buienradar
+#    name: 'buienradar'
+#    latitude: !secret location_latitude
+#    longitude: !secret location_longitude
+#    forecast: true
+#  - platform: openweathermap
+#    api_key: !secret key_openweathermap
+#    monitored_conditions:
+#      - weather
+#      - temperature
+#      - wind_speed
+#      - wind_bearing
 #      - humidity
 #      - pressure
-
-air_quality:
-  - platform: opensensemap
-    station_id: !secret stn_air_quality
-#  - platform: luchtmeetnet
-#    station_id: NL10937
-
-openuv:
-  api_key: a0f955f9b23b61eddfd98028adcc08d2
-  binary_sensors:
-    monitored_conditions:
-      - uv_protection_window
-  sensors:
-    monitored_conditions:
-      - current_ozone_level
-      - current_uv_index
-      - max_uv_index
+#      - clouds
+#      - rain
+#      - snow
+#      - weather_code
 
 camera:
   - platform: generic
@@ -102,21 +55,14 @@ camera:
     content_type: 'image/gif'
 
 homeassistant:
-  customize:
-    sensor.yr_symbol:
-      friendly_name: "Weather Symbol"
-    sensor.yr_temperature:
-      friendly_name: "Temperature"
-    sensor.yr_pressure:
-      friendly_name: "Pressure"
-    sensor.yr_wind_speed:
-      friendly_name: "Wind Speed"
-    sensor.sunrise:
-      friendly_name: "Sunrise"
-      icon: mdi:weather-sunset-up
-    sensor.sunset:
-      friendly_name: "Sunset"
-      icon: mdi:weather-sunset-down
+#    sensor.yr_symbol:
+#      friendly_name: "Weather Symbol"
+#    sensor.yr_temperature:
+#      friendly_name: "Temperature"
+#    sensor.yr_pressure:
+#      friendly_name: "Pressure"
+#    sensor.yr_wind_speed:
+#      friendly_name: "Wind Speed"
 
 group:
   weather:
@@ -126,11 +72,6 @@ group:
       - sensor.buienradar_symbol_2
       - sensor.buienradar_temperature
       - sensor.buienradar_temperature_2
-      - sensor.day_night
-      - sensor.moon
-      - sensor.season
-      - sensor.sunrise
-      - sensor.sunset
       - sensor.yr_symbol
       - sensor.yr_temperature
       - sensor.yr_pressure
@@ -145,34 +86,4 @@ group:
       - sensor.owm_rain
       - sensor.owm_snow
       - sensor.owm_weather_code
-      - sun.sun
-      - sun.above_horizon
-  environment:
-    name: "Environment"
-    entities:
-      - binary_sensor.protection_window
-      - sensor.current_ozone_level
-      - sensor.current_uv_index
-      - sensor.current_uv_level
-      - sensor.max_uv_index
-      - sensor.skin_type_1_safe_exposure_time
-      - sensor.skin_type_2_safe_exposure_time
-      - sensor.skin_type_3_safe_exposure_time
-      - sensor.skin_type_4_safe_exposure_time
-      - sensor.skin_type_5_safe_exposure_time
-      - sensor.skin_type_6_safe_exposure_time
-#      - sensor.luftdaten_16904_humidity
-#      - sensor.luftdaten_16904_p1
-#      - sensor.luftdaten_16904_p2
-#      - sensor.luftdaten_16904_pressure
-#      - sensor.luftdaten_16904_temperature
-
-automation:
-  - alias: Update OpenUV every hour (24 of 50 calls per day)
-    trigger:
-      platform: time_pattern
-      minutes: "/30"
-      seconds: 00
-    action:
-      service: openuv.update_data
 

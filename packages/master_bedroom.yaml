@@ -11,7 +11,7 @@ sensor:
   - platform: template
     sensors:
       alarm_time:
-        friendly_name: 'Wake-up light time'
+        friendly_name: 'Alarm time'
         icon_template: mdi:alarm
         value_template: '{% if states.input_number.alarmhour.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.alarmhour.state|round(0)|string }}:{% if states.input_number.alarmminutes.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.alarmminutes.state|round(0)|string }}'
         entity_id:
@@ -27,21 +27,21 @@ input_datetime:
 
 input_number:
   alarmhour:
-    name: Wake-up light hour
+    name: Alarm hours
     icon: mdi:timer
     initial: 7
     min: 0
     max: 23
     step: 1
   alarmminutes:
-    name: Wake-up light minutes
+    name: Alarm minutes
     icon: mdi:timer
     initial: 30
     min: 0
     max: 59
     step: 1
   alarmdelay:
-    name: Wake-up light transition delay
+    name: Transition delay
     icon: mdi:timer
     initial: 20
     min: 0
@@ -50,7 +50,7 @@ input_number:
 
 input_boolean:
   bedroom_alarm_clock_enabled:
-    name: Activate Alarm
+    name: Alarm ingeschakeld
     icon: mdi:alarm-check
     initial: true
   alarm_monday:
@@ -221,6 +221,9 @@ automation:
     - service: script.turn_on
       data:
         entity_id: script.scn_wakeup_light_on
+    - service: script.turn_on
+      data:
+        entity_id: script.bedroom_amp_start_media
 
 # ------------------------------------------------------- #
 # Use remote control of bedroom amp to turn of light      #
@@ -278,30 +281,79 @@ script:
         transition: 900
     - delay:
         seconds: 900
-    - service: media_player.turn_on
-      data:
-        entity_id: media_player.master_bedroom_amp
-    - service: media_player.select_source
-      data:
-        entity_id: media_player.master_bedroom_amp
-        source: TUNER
-    - service: media_player.volume_set
-      data:
-        entity_id: media_player.master_bedroom_amp
-        volume_level: 0.06
-    - service: media_player.play_media
-      entity_id: media_player.master_bedroom_amp
-      data:
-        media_content_type: music
-        media_content_id: "/local/Wake_Up_fade_in.mp3"
     - delay:
         seconds: 300
     - service: light.turn_on
       data:
         entity_id: light.masterbedroom
 
+  bedroom_amp_start_media:
+    alias: "temp debug Bedroom amp start media play"
+    sequence:
+      - condition: state
+        entity_id: media_player.master_bedroom_amp
+        state: 'off'
+      - service: media_player.turn_on
+        data:
+          entity_id: media_player.master_bedroom_amp
+      - delay:
+          seconds: 5
+      - service: media_player.select_source
+        data:
+          entity_id: media_player.master_bedroom_amp
+          source: IRADIO
+      - delay:
+          seconds: 5
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.master_bedroom_amp
+          volume_level: 0.02
+      - delay:
+          seconds: 5
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.master_bedroom_amp
+          media_content_type: music
+          media_content_id: "http://192.168.111.1:8123/local/Wake_Up_fade_in.mp3"
+      - delay:
+          seconds: 150
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.master_bedroom_amp
+          volume_level: 0.03
+      - delay:
+          seconds: 150
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.master_bedroom_amp
+          volume_level: 0.04
+      - delay:
+          seconds: 150
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.master_bedroom_amp
+          volume_level: 0.05
+      - delay:
+          seconds: 150
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.master_bedroom_amp
+          volume_level: 0.06
+      - delay:
+          seconds: 300
+      - service: media_player.select_source
+        data:
+          entity_id: media_player.master_bedroom_amp
+          source: FM
+
   scn_wakeup_light_off:
     sequence:
+      - service: script.turn_off
+        data:
+          entity_id: script.scn_wakeup_light_on
+      - service: script.turn_off
+        data:
+          entity_id: script.bedroom_amp_start_media
       - service: light.turn_on
         data:
           entity_id: light.masterbedroom
@@ -313,4 +365,5 @@ script:
       - service: light.turn_off
         data:
           entity_id: light.masterbedroom
+
 
