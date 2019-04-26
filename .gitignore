@@ -5,7 +5,6 @@
 # Share this file
 !.gitignore
 
-
 # Allow Home Assistant version info
 !.HA_VERSION
 
@@ -77,6 +76,8 @@ webostv.conf
 
 # Cached stuff
 deps
+cache
+.cache
 
 # Python cache
 __pycache__
