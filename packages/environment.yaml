@@ -15,9 +15,9 @@ sensor:
 #      - humidity
 #      - pressure
 
-air_quality:
-  - platform: opensensemap
-    station_id: !secret stn_air_quality
+#air_quality:
+#  - platform: opensensemap
+#    station_id: !secret stn_air_quality
 #  - platform: luchtmeetnet
 #    station_id: NL10937
 
@@ -44,6 +44,7 @@ homeassistant:
 group:
   environment:
     name: "Environment"
+    control: hidden
     entities:
       - binary_sensor.protection_window
       - sensor.current_ozone_level
@@ -66,6 +67,7 @@ group:
 
 automation:
   - alias: Update OpenUV every hour (24 of 50 calls per day)
+    initial_state: true
     trigger:
       platform: time_pattern
       minutes: "/30"

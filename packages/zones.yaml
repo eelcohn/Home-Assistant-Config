@@ -8,6 +8,6 @@ zone:
 - name: !secret zone1_name
   latitude: !secret zone1_latitude
   longitude: !secret zone1_longitude
-  icon: mdi:server-network
+  icon: mdi:worker
   radius: 250
 

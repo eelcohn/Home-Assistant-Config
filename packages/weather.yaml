@@ -19,6 +19,18 @@ weather:
 #      - temperature
 
 sensor:
+  - platform: template
+    sensors:
+      outdoor_temperature:
+        entity_id:
+          - weather.buienradar
+        friendly_name: "Outdoors"
+        icon_template: mdi:thermometer
+        unit_of_measurement: "°C"
+        value_template: "{{ state_attr('weather.buienradar', 'temperature') }}"
+  - platform: buienradar
+    monitored_conditions:
+      - mintemp_1d
 #  - platform: yr
 #    monitored_conditions:
 #      - pressure
@@ -67,23 +79,44 @@ homeassistant:
 group:
   weather:
     name: "Weather"
+    control: hidden
     entities:
-      - sensor.buienradar_symbol
-      - sensor.buienradar_symbol_2
-      - sensor.buienradar_temperature
-      - sensor.buienradar_temperature_2
-      - sensor.yr_symbol
-      - sensor.yr_temperature
-      - sensor.yr_pressure
-      - sensor.yr_wind_speed
-      - sensor.owm_condition
-      - sensor.owm_temperature
-      - sensor.owm_wind_speed
-      - sensor.owm_wind_bearing
-      - sensor.owm_humidity
-      - sensor.owm_pressure
-      - sensor.owm_cloud_coverage
-      - sensor.owm_rain
-      - sensor.owm_snow
-      - sensor.owm_weather_code
+      - camera.buienradar_forecast
+      - camera.knmi_weatherradar
+      - sensor.br_minimum_temperature_1d
+      - sensor.outdoor_temperature
+#      - sensor.buienradar_symbol
+#      - sensor.buienradar_symbol_2
+#      - sensor.buienradar_temperature_2
+#      - sensor.yr_symbol
+#      - sensor.yr_temperature
+#      - sensor.yr_pressure
+#      - sensor.yr_wind_speed
+#      - sensor.owm_condition
+#      - sensor.owm_temperature
+#      - sensor.owm_wind_speed
+#      - sensor.owm_wind_bearing
+#      - sensor.owm_humidity
+#      - sensor.owm_pressure
+#      - sensor.owm_cloud_coverage
+#      - sensor.owm_rain
+#      - sensor.owm_snow
+#      - sensor.owm_weather_code
+      - weather.buienradar
+
+automation:
+    # ------------------------------------------------------- #
+    # Send notification if night temperature drops below 0°C  #
+    # ------------------------------------------------------- #
+  - alias: 'Frost warning'
+    initial_state: true
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.br_minimum_temperature_1d
+        below: 0
+    action:
+      - service: notify.eelco
+        data_template:
+          title: '*Vorstwaarschuwing*'
+          message: Vannacht gaat het vriezen. Sluit het water af en denk om de tuinplanten.
 

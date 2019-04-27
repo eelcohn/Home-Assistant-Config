@@ -1,0 +1,7 @@
+- name: Eelco
+  id: eelco
+  user_id: !secret userid_eelco
+  device_trackers:
+    - device_tracker.eelcapone
+    - device_tracker.eelcapone_work
+

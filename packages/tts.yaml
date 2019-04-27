@@ -1,5 +1,5 @@
 tts:
-  - platform: google
+  - platform: google_translate
     language: nl
-    cache_dir: /config/cache/tts/
+    cache_dir: /config/.cache/tts/
 

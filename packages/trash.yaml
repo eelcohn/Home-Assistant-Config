@@ -3,7 +3,7 @@ sensor:
     postcode: !secret location_zipcode
     huisnummer: !secret location_huisnummer
     toevoeging: !secret location_toevoeging
-    datumformaat: "%a %d %b"
+#    datumformaat: "%a %d %b"
   - platform: template
     sensors:
       trash_restafval_date:
@@ -83,6 +83,7 @@ group:
     name: "Trash pickup"
     control: hidden
     entities:
+      - input_boolean.trash_reminders
       - sensor.trash_gft
       - sensor.trash_gft_date
       - sensor.trash_kerstbomen
@@ -98,7 +99,6 @@ group:
       - sensor.trash_tomorrow
       - sensor.trash_today_desc
       - sensor.trash_tomorrow_desc
-      - sensor.trash_reminders
       - sensor.trash_firstdate
       - sensor.trash_firstwastetype
 

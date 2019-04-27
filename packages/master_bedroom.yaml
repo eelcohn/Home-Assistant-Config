@@ -13,7 +13,8 @@ sensor:
       alarm_time:
         friendly_name: 'Alarm time'
         icon_template: mdi:alarm
-        value_template: '{% if states.input_number.alarmhour.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.alarmhour.state|round(0)|string }}:{% if states.input_number.alarmminutes.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.alarmminutes.state|round(0)|string }}'
+#        value_template: '{% if states.input_number.alarmhour.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.alarmhour.state|round(0)|string }}:{% if states.input_number.alarmminutes.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.alarmminutes.state|round(0)|string }}'
+        value_template: "{% if states('input_number.alarmhour')|round(0)|int < 10 %}0{% endif %}{{ states('input_number.alarmhour')|round(0)|string }}:{% if states('input_number.alarmminutes')|round(0)|int < 10 %}0{% endif %}{{ states('input_number.alarmminutes')|round(0)|string }}"
         entity_id:
           - input_number.alarmminutes
           - input_number.alarmhour
@@ -52,7 +53,7 @@ input_boolean:
   bedroom_alarm_clock_enabled:
     name: Alarm ingeschakeld
     icon: mdi:alarm-check
-    initial: true
+    initial: false
   alarm_monday:
     name: Monday
     icon: mdi:calendar-clock
@@ -85,8 +86,18 @@ input_boolean:
 group:
   master_bedroom:
     name: "Master Bedroom"
+    control: hidden
     entities:
       - light.masterbedroom
+      - input_boolean.bedroom_alarm_clock_enabled
+      - input_boolean.alarm_monday
+      - input_boolean.alarm_tuesday
+      - input_boolean.alarm_wednesday
+      - input_boolean.alarm_thursday
+      - input_boolean.alarm_friday
+      - input_boolean.alarm_saturday
+      - input_boolean.alarm_sunday
+      - input_datetime.debug_bedroom_alarm_clock_time
       - input_number.alarmhour
       - input_number.alarmminutes
       - input_number.alarmdelay
@@ -99,6 +110,7 @@ automation:
 # Turn on wakeup automation in master bedroom             #
 # ------------------------------------------------------- #
 - alias: 'ZME_WALLC-S NorthWest'
+  initial_state: true
   trigger:
     - platform: event
       event_type: zwave.scene_activated
@@ -126,6 +138,7 @@ automation:
 # Turn off wakeup automation in master bedroom            #
 # ------------------------------------------------------- #
 - alias: 'ZME_WALLC-S SouthWest'
+  initial_state: true
   trigger:
     - platform: event
       event_type: zwave.scene_activated
@@ -153,6 +166,7 @@ automation:
 # Turn on master bedroom light                            #
 # ------------------------------------------------------- #
 - alias: 'ZME_WALLC-S NorthEast'
+  initial_state: true
   trigger:
     - platform: event
       event_type: zwave.scene_activated
@@ -175,6 +189,7 @@ automation:
 # Turn off master bedroom light                           #
 # ------------------------------------------------------- #
 - alias: 'ZME_WALLC-S SouthEast'
+  initial_state: true
   trigger:
     - platform: event
       event_type: zwave.scene_activated
@@ -200,6 +215,7 @@ automation:
 # Gently turn on the bedroom light                        #
 # ------------------------------------------------------- #
 - alias: 'Slaapkamer Wake-Up light'
+  initial_state: true
   trigger:
     - platform: time_pattern
       minutes: '/1'
@@ -213,10 +229,10 @@ automation:
 #    - condition: state
 #      entity_id: group.phone_trackers
 #      state: 'home'
-    - condition: numeric_state
-      entity_id: sun.sun
-      value_template: '{{ state.attributes.elevation }}'
-      below: 1
+#    - condition: numeric_state
+#      entity_id: sun.sun
+#      value_template: '{{ state.attributes.elevation }}'
+#      below: 1
   action:
     - service: script.turn_on
       data:
@@ -229,6 +245,7 @@ automation:
 # Use remote control of bedroom amp to turn of light      #
 # ------------------------------------------------------- #
 - alias: 'Wake-Up light off'
+  initial_state: true
   trigger:
     - platform: state
       entity_id: media_player.master_bedroom_amp

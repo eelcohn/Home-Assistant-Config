@@ -1,23 +1,8 @@
 resources:
   - url: /local/lovelace/mini-media-player-bundle.js
     type: module
-  - url: /local/lovelace/compact-custom-header/compact-custom-header.js?v=0.2.9
-    type: js
-  - url: /local/lovelace/tracker-card-master/tracker-card.js?v0
-    type: js
-
-# Compact header
-x-compact-header: &compact-header
-- type: custom:compact-custom-header
-  header: true
-  menu: true
-  notification: true
-  voice: false
-  options: true
-  tabs: true
-  clock: notification
-  clock_format: 24
-  clock_am_pm: false
+  - url: /local/lovelace/tracker-card/tracker-card.js?track=true
+    type: module
 
 # Images for Afvalwijzer
 x-afval-images: &afval-images
@@ -52,6 +37,7 @@ views:
               - sensor.power_tariff
               - sensor.power_consumption_normal
               - sensor.power_consumption_low
+              - sensor.voltage_phase_l1
               - sensor.nut_ups_input_voltage
               - sensor.nut_ups_status
               - sensor.nut_ups_battery_charge
@@ -118,7 +104,6 @@ views:
             - sensor.ups
             - sensor.usps
             - sensor.all_deliveries
-      - <<: *compact-header
 
   - title: Climate
     id: view-climate
@@ -160,25 +145,27 @@ views:
         title: Climate Control
         cards:
           - type: thermostat
-            entity: climate.ecobee
+            entity: climate.livingroom
           - type: history-graph
             id: history-temperature
             title: 'Temperature'
             entities:
-              - climate.ecobee
-              - sensor.buienradar_temperature_2
-      - <<: *compact-header
+              - sensor.livingroom_temperature
+              - sensor.outdoor_temperature
 
-  - title: Living Quarters
+  - title: Living Room
     id: view-livingroom
     icon: mdi:sofa
     cards:
       - type: vertical-stack
         cards:
           - type: glance
-            title: Master Bedroom
+            title: Living Room
             entities:
-              - light.hue_white_light_1
+              - light.dinnertable
+              - switch.lamp_dining_window
+              - switch.lamp_couch
+              - switch.lamp_couch_window
           - type: entities
             title: Media Players
             show_header_toggle: false
@@ -201,6 +188,11 @@ views:
                 power_color: true
                 show_source: true
                 show_tts: google
+          - type: glance
+            title: Subwoofer
+            show_header_toggle: false
+            entities:
+              - switch.subwoofer
       - type: vertical-stack
         cards:
           - type: entities
@@ -211,7 +203,6 @@ views:
               - input_number.housecleaning_hour
               - input_number.housecleaning_minutes
               - vacuum.roomba_living_quarters        
-      - <<: *compact-header
 
   - title: Master Bedroom
     id: view-masterbedroom
@@ -254,7 +245,6 @@ views:
                 power_color: true
                 show_source: true
                 show_tts: google
-      - <<: *compact-header
 
   - title: Hallway
     id: view-hallway
@@ -268,7 +258,12 @@ views:
               - light.stairs_l
               - light.stairs_m
               - light.stairs_h
-      - <<: *compact-header
+          - type: glance
+            title: Hallway
+            entities:
+              - binary_sensor.stairs_motion
+              - sensor.stairs_temperature
+              - sensor.stairs_light_level
 
   - title: Outdoors
     id: view-outdoors
@@ -278,13 +273,12 @@ views:
         title: Outdoor lights
         cards:
           - type: glance
-            title: Frontdoor
+            title: Outdoor lamps
             entities:
               - light.frontdoor
-      - <<: *compact-header
 
-  - title: People
-    id: view-people
+  - title: Persons
+    id: view-persons
     icon: mdi:account-multiple
     cards:
       - type: vertical-stack
@@ -292,7 +286,7 @@ views:
           - type: glance
             title: People
             entities:
-              - device_tracker.eelcapone
+              - person.eelco
               - device_tracker.eelcapone_work
               - device_tracker.eelcapone_tablet
       - type: map
@@ -302,46 +296,74 @@ views:
           - device_tracker.eelcapone_work
           - device_tracker.eelcapone_tablet
           - zone.home
-      - <<: *compact-header
 
   - title: Cars
     id: view-cars
-    icon: mdi:car
+    icon: mdi:car-multiple
     cards:
       - type: vertical-stack
         cards:
-          - type: glance
+          - type: entities
             title: Seat Leon
+            show_header_toggle: false
             entities:
               - sensor.seat_leon_expdate
               - sensor.seat_leon_insured
               - sensor.seat_leon_recall
-      - <<: *compact-header
-
-  - title: Network
-    id: view-network
-    icon: mdi:server-network
-    cards:
-      - type: vertical-stack
-        cards:
-          - type: glance
-            title: Network Devices
+          - type: entities
+            title: Toyota Auris
+            show_header_toggle: false
             entities:
-#              - sensor.processor_use
-#              - sensor.memory_use
-              - sensor.uptime
-              - sensor.database_size
-              - sensor.fritzbox
-      - <<: *compact-header
+              - sensor.toyota_auris_expdate
+              - sensor.toyota_auris_insured
+              - sensor.toyota_auris_recall
+          - type: entities
+            title: Bugatti Veyron
+            show_header_toggle: false
+            entities:
+              - sensor.bugatti_veyron_expdate
+              - sensor.bugatti_veyron_insured
+              - sensor.bugatti_veyron_recall
+          - type: entities
+            title: Chevrolet Nubira
+            show_header_toggle: false
+            entities:
+              - sensor.chevrolet_nubira_expdate
+              - sensor.chevrolet_nubira_insured
+              - sensor.chevrolet_nubira_recall
 
   - title: Configuration
     id: view-configuration
     icon: mdi:settings
     cards:
-      - type: custom:tracker-card
-        title:
-        trackers:
-          - sensor.custom_card_tracker
-          - sensor.custom_component_tracker
-      - <<: *compact-header
+      - type: vertical-stack
+        title: System
+        cards:
+          - type: glance
+            title: Synology Disks
+            entities:
+              - sensor.status_sda
+              - sensor.status_sdb
+              - sensor.status_smart_sda
+              - sensor.status_smart_sdb
+              - sensor.status_volume_1
+              - sensor.volume_used_volume_1
+              - sensor.database_size
+          - type: glance
+            title: Network status
+            entities:
+              - sensor.fritz_netmonitor
+              - sensor.fritzbox_is_linked
+              - sensor.fritzbox_is_connected
+              - sensor.fritzbox_uptime
+              - sensor.uptime
+      - type: vertical-stack
+        title: Custom components
+        cards:
+          - type: custom:tracker-card
+            title:
+            trackers:
+              - sensor.custom_card_tracker
+              - sensor.custom_component_tracker
+              - sensor.custom_python_script_tracker
 

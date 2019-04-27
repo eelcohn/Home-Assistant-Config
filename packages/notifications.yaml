@@ -33,7 +33,7 @@ notify:
   - name: livingroom_tv
     platform: webostv
     host: !secret ip_mp_tv_lq
-    filename: ./cache/webostv.conf
+    filename: ./.cache/webostv.conf
 
 # --------------------------------------------------------------------------- #
 # Group notifications                                                         #

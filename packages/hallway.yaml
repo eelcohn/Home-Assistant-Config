@@ -2,9 +2,54 @@ group:
   hallway:
     name: Hallway
     entities:
+      - binary_sensor.stairs_motion
       - light.hallwayfrontdoor
       - light.hallwayfar
       - light.stairs_l
       - light.stairs_m
       - light.stairs_h
+      - sensor.stairs_temperature
+      - sensor.stairs_light_level
+
+automation:
+  - id: 'stairs_motion_on'
+    initial_state: true
+    alias: Turn stairs light on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.stairs_motion
+        to: 'on'
+    condition:
+      - condition: numeric_state
+        entity_id: sensor.stairs_light_level
+        below: 2
+    action:
+      - service: light.turn_on
+        data_template:
+          brightness: "{% if ((state_attr('sun.sun', 'elevation') < 0) and (now().hour < 12)) %}128{% else %}255{% endif %}"
+          rgb_color:
+            - 255
+            - "{% if ((state_attr('sun.sun', 'elevation') < 0) and (now().hour < 12)) %}0{% else %}255{% endif %}"
+            - "{% if ((state_attr('sun.sun', 'elevation') < 0) and (now().hour < 12)) %}0{% else %}255{% endif %}"
+          entity_id:
+            - light.stairs_h
+            - light.stairs_m
+            - light.stairs_l
+          
+  - id: 'stairs_motion_off'
+    initial_state: true
+    alias: Turn stairs light off
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.stairs_motion
+        to: 'off'
+        for:
+          seconds: 40
+    action:
+      - service: light.turn_off
+        data:
+          entity_id:
+            - light.stairs_h
+            - light.stairs_m
+            - light.stairs_l
 

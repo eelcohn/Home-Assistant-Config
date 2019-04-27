@@ -7,13 +7,16 @@ recorder:
   purge_interval: 1
   include:
     entities:
+      - sensor.livingroom_temperature
+      - sensor.outdoor_temperature
 #      - sensor.gas_consumption
 #      - sensor.power_consumption
       - sensor.power_consumption_normal
       - sensor.power_consumption_low
       - sensor.power_tariff
+      - sensor.voltage_phase_l1
       - sensor.nut_ups_status_data
       - device_tracker.eelco_phone
       - device_tracker.eelco_phone_work
       - vacuum.roomba_living_quarters
-      - sensor.buienradar_temperature_2
+

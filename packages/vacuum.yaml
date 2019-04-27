@@ -1,7 +1,7 @@
 vacuum:
   - platform: roomba
     name: Roomba Living Quarters
-    host: !secret ip_roomba_livingroom
+    host: !secret vacuum_lr_ip
     username: !secret vacuum_lr_username
     password: !secret vacuum_lr_password
     continuous: true
@@ -40,15 +40,19 @@ sensor:
       housecleaning_time:
         friendly_name: 'House cleaning starts at'
         icon_template: mdi:alarm
-        value_template: '{% if states.input_number.housecleaning_hour.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.housecleaning_hour.state|round(0)|string }}:{% if states.input_number.housecleaning_minutes.state|round(0)|int < 10 %}0{% endif %}{{ states.input_number.housecleaning_minutes.state|round(0)|string }}'
+        value_template: '{% if states("input_number.housecleaning_hour")|round(0)|int < 10 %}0{% endif %}{{ states("input_number.housecleaning_hour")|round(0)|string }}:{% if states("input_number.housecleaning_minutes")|round(0)|int < 10 %}0{% endif %}{{ states("input_number.housecleaning_minutes")|round(0)|string }}'
         entity_id:
           - input_number.housecleaning_minutes
           - input_number.housecleaning_hour
 group:
   vacuum:
     name: "Robot Vacuumers"
+    control: hidden
     entities:
       - binary_sensor.vacuum_days
+      - input_boolean.housecleaning_activated
+      - input_number.housecleaning_minutes
+      - input_number.housecleaning_hour
       - sensor.housecleaning_time
       - vacuum.roomba_living_quarters
 
@@ -57,6 +61,7 @@ automation:
 # Start the vacuum robots!                                #
 # ------------------------------------------------------- #
 - alias: 'House cleaning'
+  initial_state: true
   trigger:
     - platform: time_pattern
       minutes: '/1'
@@ -85,7 +90,7 @@ automation:
 # Alert if the bin of the robot is full                   #
 # ------------------------------------------------------- #
 - alias: 'Vacuum Bin Full Alert'
-  initial_state: 'on'
+  initial_state: true
   trigger:
     - platform: template
       value_template: "{{ is_state_attr('vacuum.roomba_living_quarters', 'bin_full', true) }}"
@@ -99,7 +104,7 @@ automation:
 # Alert if the robot is stuck or dead                     #
 # ------------------------------------------------------- #
 - alias: 'Vacuum Stuck Alert'
-  initial_state: 'on'
+  initial_state: true
   trigger:
     - platform: template
       value_template: "{{ is_state_attr('vacuum.roomba_living_quarters', 'status', 'Stuck') }}"

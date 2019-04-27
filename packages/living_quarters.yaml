@@ -6,43 +6,319 @@ media_player:
   - platform: webostv
     host: !secret ip_mp_tv_lq
     name: Livingroom TV
-    filename: ./cache/webostv.conf
+    filename: ./.cache/webostv.conf
 
 homeassistant:
   customize:
     media_player.livingroom_tv:
       icon: mdi:television
 
+switch:
+#light:
+  - platform: mqtt
+    name: Lamp Dining Window
+    icon: mdi:lamp
+    command_topic: "cmnd/Panamalar9B7954/POWER"
+    state_topic: "tele/Panamalar9B7954/STATE"
+    value_template: "{{value_json.POWER}}"
+    availability_topic: "tele/Panamalar9B7954/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: false
+  - platform: mqtt
+    name: Lamp Couch
+    icon: mdi:lamp
+    command_topic: "cmnd/Panamalar9C09D2/POWER"
+    state_topic: "tele/Panamalar9C09D2/STATE"
+    value_template: "{{value_json.POWER}}"
+    availability_topic: "tele/Panamalar9C09D2/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: false
+  - platform: mqtt
+    name: Lamp Couch Window
+    icon: mdi:lamp
+    command_topic: "cmnd/Panamalar9C0A75/POWER"
+    state_topic: "tele/Panamalar9C0A75/STATE"
+    value_template: "{{value_json.POWER}}"
+    availability_topic: "tele/Panamalar9C0A75/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: false
+  - platform: mqtt
+    name: Subwoofer
+    icon: mdi:speaker
+    command_topic: "cmnd/Panamalar9BBACC/POWER"
+    state_topic: "tele/Panamalar9BBACC/STATE"
+    value_template: "{{value_json.POWER}}"
+    availability_topic: "tele/Panamalar9BBACC/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: false
+
+sensor:
+  - platform: mqtt
+    name: Lamp Dining Window Energy
+    state_topic: "tele/Panamalar9B7954/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Today"] }}'
+    unit_of_measurement: "kWh"
+  - platform: mqtt
+    name: Lamp Dining Window Power
+    state_topic: "tele/Panamalar9B7954/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Power"] }}'
+    unit_of_measurement: "W"
+  - platform: mqtt
+    name: Lamp Dining Window Voltage
+    state_topic: "tele/Panamalar9B7954/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Voltage"] }}'
+    unit_of_measurement: "V"
+  - platform: mqtt
+    name: Lamp Dining Window Current
+    state_topic: "tele/Panamalar9B7954/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Current"] }}'
+    unit_of_measurement: "A"
+  - platform: mqtt
+    name: Lamp Dining Window Signal Strength
+    icon: mdi:wifi
+    state_topic: "tele/Panamalar9B7954/STATE"
+    value_template: '{{ value_json["Wifi"]["RSSI"] }}'
+    unit_of_measurement: "dBm"
+  - platform: mqtt
+    name: Lamp Dining Window Software Version
+    state_topic: "tele/Panamalar9B7954/INFO1"
+    value_template: '{{ value_json["Version"] }}'
+  - platform: mqtt
+    name: Lamp Couch Energy
+    state_topic: "tele/Panamalar9C09D2/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Today"] }}'
+    unit_of_measurement: "kWh"
+  - platform: mqtt
+    name: Lamp Couch Power
+    state_topic: "tele/Panamalar9C09D2/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Power"] }}'
+    unit_of_measurement: "W"
+  - platform: mqtt
+    name: Lamp Couch Voltage
+    state_topic: "tele/Panamalar9C09D2/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Voltage"] }}'
+    unit_of_measurement: "V"
+  - platform: mqtt
+    name: Lamp Couch Current
+    state_topic: "tele/Panamalar9C09D2/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Current"] }}'
+    unit_of_measurement: "A"
+  - platform: mqtt
+    name: Lamp Couch Signal Strength
+    icon: mdi:wifi
+    state_topic: "tele/Panamalar9C09D2/STATE"
+    value_template: '{{ value_json["Wifi"]["RSSI"] }}'
+    unit_of_measurement: "dBm"
+  - platform: mqtt
+    name: Lamp Couch Software Version
+    state_topic: "tele/Panamalar9C09D2/INFO1"
+    value_template: '{{ value_json["Version"] }}'
+  - platform: mqtt
+    name: Lamp Couch Window Energy
+    state_topic: "tele/Panamalar9C0A75/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Today"] }}'
+    unit_of_measurement: "kWh"
+  - platform: mqtt
+    name: Lamp Couch Window Power
+    state_topic: "tele/Panamalar9C0A75/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Power"] }}'
+    unit_of_measurement: "W"
+  - platform: mqtt
+    name: Lamp Couch Window Voltage
+    state_topic: "tele/Panamalar9C0A75/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Voltage"] }}'
+    unit_of_measurement: "V"
+  - platform: mqtt
+    name: Lamp Couch Window Current
+    state_topic: "tele/Panamalar9C0A75/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Current"] }}'
+    unit_of_measurement: "A"
+  - platform: mqtt
+    name: Lamp Couch Window Signal Strength
+    icon: mdi:wifi
+    state_topic: "tele/Panamalar9C0A75/STATE"
+    value_template: '{{ value_json["Wifi"]["RSSI"] }}'
+    unit_of_measurement: "dBm"
+  - platform: mqtt
+    name: Lamp Couch Window Software Version
+    state_topic: "tele/Panamalar9C0A75/INFO1"
+    value_template: '{{ value_json["Version"] }}'
+  - platform: mqtt
+    name: Subwoofer Energy
+    state_topic: "tele/Panamalar9BBACC/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Today"] }}'
+    unit_of_measurement: "kWh"
+  - platform: mqtt
+    name: Subwoofer Power
+    state_topic: "tele/Panamalar9BBACC/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Power"] }}'
+    unit_of_measurement: "W"
+  - platform: mqtt
+    name: Subwoofer Voltage
+    state_topic: "tele/Panamalar9BBACC/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Voltage"] }}'
+    unit_of_measurement: "V"
+  - platform: mqtt
+    name: Subwoofer Current
+    state_topic: "tele/Panamalar9BBACC/SENSOR"
+    value_template: '{{ value_json["ENERGY"]["Current"] }}'
+    unit_of_measurement: "A"
+  - platform: mqtt
+    name: Subwoofer Signal Strength
+    icon: mdi:wifi
+    state_topic: "tele/Panamalar9BBACC/STATE"
+    value_template: '{{ value_json["Wifi"]["RSSI"] }}'
+    unit_of_measurement: "dBm"
+  - platform: mqtt
+    name: Subwoofer Software Version
+    state_topic: "tele/Panamalar9BBACC/INFO1"
+    value_template: '{{ value_json["Version"] }}'
+
 group:
   woonkamer:
     name: "Livingroom"
+    control: hidden
     entities:
-      - light.hue_white_light_1
+      - light.dinnertable
       - media_player.livingroom_tv
       - media_player.livingroom_amp
+      - switch.dining_window_lamp
+      - sensor.lamp_dining_window_current
+      - sensor.lamp_dining_window_energy
+      - sensor.lamp_dining_window_power
+      - sensor.lamp_dining_window_signal_strength
+      - sensor.lamp_dining_window_software_version
+      - sensor.lamp_dining_window_voltage
+      - switch.couch_lamp
+      - sensor.lamp_couch_current
+      - sensor.lamp_couch_energy
+      - sensor.lamp_couch_power
+      - sensor.lamp_couch_signal_strength
+      - sensor.lamp_couch_software_version
+      - sensor.lamp_couch_voltage
+      - switch.couch_window_lamp
+      - sensor.lamp_couch_window_current
+      - sensor.lamp_couch_window_energy
+      - sensor.lamp_couch_window_power
+      - sensor.lamp_couch_window_signal_strength
+      - sensor.lamp_couch_window_software_version
+      - sensor.lamp_couch_window_voltage
+      - switch.subwoofer
+      - sensor.subwoofer_current
+      - sensor.subwoofer_energy
+      - sensor.subwoofer_power
+      - sensor.subwoofer_signal_strength
+      - sensor.subwoofer_software_version
+      - sensor.subwoofer_voltage
       - vacuum.roomba_living_quarters
 
 automation:
 # ------------------------------------------------------- #
 # Turn on lights when coming home at night                #
 # ------------------------------------------------------- #
-- alias: 'Auto lights at night'
-  trigger:
-    - platform: state
-      entity_id: device_tracker.eelcapone
-      from: 'not_home'
-      to: 'home'
-  condition:
-    - condition: numeric_state
-      entity_id: sun.sun
-      value_template: '{{ state.attributes.elevation }}'
-      below: -3.0
-    - condition: state
-      entity_id: 'light.hue_white_light_1'
-      state: 'off'
-  action:
-    - service: light.turn_on
-      data:
-        entity_id: 'light.hue_white_light_1'
-        brightness: 50
+  - alias: 'Auto lights at night'
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: device_tracker.eelcapone
+        from: 'not_home'
+        to: 'home'
+    condition:
+      - condition: numeric_state
+        entity_id: sun.sun
+        value_template: '{{ state.attributes.elevation }}'
+        below: -3.0
+      - condition: state
+        entity_id: light.dinnertable
+        state: 'off'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.dinnertable
+          brightness: 96
+# ------------------------------------------------------- #
+# Turn on all lights when dining table light is turned on #
+# ------------------------------------------------------- #
+  - alias: 'Lights on'
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: light.dinnertable
+        to: 'on'
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: 
+            - switch.lamp_dining_window
+            - switch.lamp_couch
+            - switch.lamp_couch_window
+# ------------------------------------------------------- #
+# Turn off all lights when dining table light is turned off #
+# ------------------------------------------------------- #
+  - alias: 'Lights off'
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: light.dinnertable
+        to: 'off'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id:
+            - switch.lamp_dining_window
+            - switch.lamp_couch
+            - switch.lamp_couch_window
+# ------------------------------------------------------- #
+# Turn on subwoofer when amplifier is turned on           #
+# ------------------------------------------------------- #
+  - alias: 'Subwoofer on'
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: media_player.livingroom_amp
+        from: 'off'
+        to: 'on'
+        for:
+#         Prevent hysteresis
+          seconds: 30
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: 
+            - switch.subwoofer
+# ------------------------------------------------------- #
+# Turn off subwoofer when amplifier is turned off         #
+# ------------------------------------------------------- #
+  - alias: 'Subwoofer off'
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: media_player.livingroom_amp
+        from: 'on'
+        to: 'off'
+        for:
+#         Prevent hysteresis
+          minutes: 3
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id:
+            - switch.subwoofer
+
 

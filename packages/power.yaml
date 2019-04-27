@@ -3,6 +3,9 @@ sensor:
     port: !secret dev_dsmr
     dsmr_version: 5
   - platform: nut
+    host: !secret synology_ip
+    username: monuser
+    password: secret
     resources:
     - ups.status
     - ups.status.display
@@ -65,7 +68,7 @@ sensor:
           {% set battery_seconds = ((states.sensor.nut_ups_battery_runtime.state | default(0) | int) % 60)   | int %}
             {{ battery_hours }}h {{ battery_minutes }}m {{ battery_seconds }}s
 
-# temp sensor; remove when smart gas meter is installed
+# temp sensor; remove when smart gas meter is installed (also remove sensor.gas_consumption_2 references)
   - platform: template
     sensors:
       gas_consumption:
@@ -73,12 +76,43 @@ sensor:
         unit_of_measurement: m³
         value_template: 0
 
+utility_meter:
+  energy:
+    source: sensor.power_consumption
+  daily_power_offpeak:
+    source: sensor.power_consumption_low
+    cycle: daily
+  daily_power_peak:
+    source: sensor.power_consumption_normal
+    cycle: daily
+  daily_gas:
+    source: sensor.gas_consumption
+    cycle: daily
+  monthly_power_offpeak:
+    source: sensor.power_consumption_low
+    cycle: monthly
+  monthly_power_peak:
+    source: sensor.power_consumption_normal
+    cycle: monthly
+  monthly_gas:
+    source: sensor.gas_consumption
+    cycle: monthly
 
 group:
   power:
     name: "Power"
+    control: hidden
     entities:
+      - sensor.daily_gas
+      - sensor.daily_power_offpeak
+      - sensor.daily_power_peak
+      - sensor.energy
       - sensor.gas_consumption
+      - sensor.gas_consumption_2
+      - sensor.hourly_gas_consumption
+      - sensor.monthly_gas
+      - sensor.monthly_power_offpeak
+      - sensor.monthly_power_peak
       - sensor.nut_ups_input_voltage
       - sensor.nut_ups_status
       - sensor.nut_ups_battery_charge
@@ -150,6 +184,12 @@ homeassistant:
       hidden: true
     sensor.power_consumption_phase_l3:
       hidden: true
+    sensor.voltage_phase_l1:
+      hidden: true
+    sensor.voltage_phase_l2:
+      hidden: true
+    sensor.voltage_phase_l3:
+      hidden: true
     sensor.voltage_sags_phase_l1:
       hidden: true
     sensor.voltage_sags_phase_l2:
@@ -161,6 +201,8 @@ homeassistant:
     sensor.voltage_swells_phase_l2:
       hidden: true
     sensor.voltage_swells_phase_l3:
+      hidden: true
+    sensor.gas_consumption:
       hidden: true
     sensor.hourly_gas_consumption:
       hidden: true
@@ -185,6 +227,7 @@ automation:
     # Notify on power disruptions                             #
     # ------------------------------------------------------- #
   - alias: 'UPS Power disruption notification'
+    initial_state: true
     trigger:
       - platform: state
         entity_id: sensor.nut_ups_status_data
@@ -199,6 +242,7 @@ automation:
     # Notify when the UPS battery runs out                    #
     # ------------------------------------------------------- #
   - alias: 'UPS Power battery low notification'
+    initial_state: true
     trigger:
       - platform: state
         entity_id: sensor.nut_ups_status_data
@@ -213,6 +257,7 @@ automation:
     # Notify when the power has been restored                 #
     # ------------------------------------------------------- #
   - alias: 'UPS Power restored notification'
+    initial_state: true
     trigger:
       - platform: state
         entity_id: sensor.nut_ups_status_data
@@ -227,6 +272,7 @@ automation:
     # Notify when battery charging has completed              #
     # ------------------------------------------------------- #
   - alias: 'UPS Battery charging completed notification'
+    initial_state: true
     trigger:
       - platform: state
         entity_id: sensor.nut_ups_status_data
@@ -241,6 +287,7 @@ automation:
     # Notify when the UPS battery needs to be replaced        #
     # ------------------------------------------------------- #
   - alias: 'UPS Replace Battery notification'
+    initial_state: true
     trigger:
       - platform: state
         entity_id: sensor.nut_ups_status_data
@@ -255,6 +302,7 @@ automation:
     # Notify when the UPS is overloaded                       #
     # ------------------------------------------------------- #
   - alias: 'UPS overload notification'
+    initial_state: true
     trigger:
       - platform: state
         entity_id: sensor.nut_ups_status_data

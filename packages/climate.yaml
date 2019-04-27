@@ -1,17 +1,30 @@
+sensor:
+  - platform: template
+    sensors:
+      livingroom_temperature:
+        friendly_name: "Livingroom"
+        icon_template: mdi:temperature
+        unit_of_measurement: "°C"
+        value_template: 20.5
+
 climate:
-  - platform: demo
+  - platform: generic_thermostat
+    name: Livingroom
+    heater: switch.gas_boiler
+    target_sensor: sensor.livingroom_temperature
+    min_temp: 10
+    max_temp: 25
+    ac_mode: false
+    hot_tolerance: 0.5
+    cold_tolerance: 0.1
+    min_cycle_duration:
+      minutes: 5
+    keep_alive:
+      minutes: 30
+    initial_operation_mode: 'auto'
 #  - platform: opentherm_gw
 #    device: !secret dev_opentherm_gw
 #    precision: 0.5
-
-homeassistant:
-  customize:
-    climate.ecobee:
-      friendly_name: "Thermostaat woonkamer"
-    climate.heatpump:
-      friendly_name: "Thermostaat slaapkamer"
-    climate.hvac:
-      friendly_name: "Air Conditioner"
 
 group:
   climate:
@@ -20,4 +33,5 @@ group:
       - climate.ecobee
       - climate.heatpump
       - climate.hvac
+      - sensor.livingroom_temperature
 

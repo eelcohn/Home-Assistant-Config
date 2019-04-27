@@ -6,6 +6,16 @@ homeassistant:
   unit_system: metric
   time_zone:   Europe/Amsterdam
   packages:    !include_dir_named packages
+  auth_providers:
+#    - type: homeassistant
+    - type: trusted_networks
+      allow_bypass_login: true
+      trusted_networks:
+        - 127.0.0.1
+        - ::1
+        - !secret ip_network_local
+        - !secret ip_network_vpn
+        - fd00::/8
 
 http:
   use_x_forwarded_for: true
@@ -14,12 +24,6 @@ http:
   trusted_proxies:
     - 127.0.0.1
     - ::1
-  trusted_networks:
-    - 127.0.0.1
-    - ::1
-    - !secret ip_network_local
-    - !secret ip_network_vpn
-    - fd00::/8
   # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
   # base_url: example.duckdns.org:8123
 
@@ -31,31 +35,24 @@ frontend:
 lovelace:
   mode: yaml
 
-map:
-logbook:
-history:
 config:
+conversation:
+discovery:
+history:
+logbook:
+map:
+system_health:
+wake_on_lan:
 
 updater:
-  # Optional, allows Home Assistant developers to focus on popular components.
-  # include_used_components: true
+  include_used_components: false
 
-# Discover some devices automatically
-discovery:
+person: !include person.yaml
 
-# Allows you to issue voice commands from the frontend in enabled browsers
-conversation:
-
-hue:
-  bridges:
-    - host: !secret ip_huebridge
-      filename: /config/cache/phue.conf
-      allow_unreachable: true
-      allow_hue_groups: false
-
-#light:
-#  - platform: hue
-#    host:     !secret ip_huebridge
-
-wake_on_lan:
+group:
+  persons:
+    name: "Persons"
+    control: hidden
+    entities:
+      - person.eelco
 

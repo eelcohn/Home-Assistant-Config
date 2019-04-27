@@ -9,6 +9,7 @@ automation:
     # Turn frontdoor light on at dusk                         #
     # ------------------------------------------------------- #
   - alias: 'Frontdoor light on'
+    initial_state: true
     trigger:
 #      - platform: sun
 #        event: sunset
@@ -31,6 +32,7 @@ automation:
     # Turn frontdoor light off at dawn                        #
     # ------------------------------------------------------- #
   - alias: 'Frontdoor light off'
+    initial_state: true
     trigger:
 #      - platform: sun
 #        event: sunrise

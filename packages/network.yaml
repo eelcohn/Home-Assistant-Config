@@ -1,20 +1,20 @@
-fritzbox:
-  devices:
-    - host: !secret ip_router_fritzbox
-      username: !secret fritzbox_username
-      password: !secret fritzbox_password
-
 sensor:
+  - platform: fritzbox_netmonitor
+    host: !secret fritzbox_ip
   - platform: uptime
   - platform: synologydsm
-    host: !secret ip_synologydsm
+    host: !secret synology_ip
+    port: !secret synology_port
     username: !secret synology_username
     password: !secret synology_password
-    verify_ssl: false
+    ssl: true
     monitored_conditions:
       - cpu_total_load
       - memory_real_usage
-      - network_up
+      - disk_status
+      - disk_smart_status
+      - volume_status
+      - volume_percentage_used
   - platform: sql
     db_url: !secret mariadb_url
     queries:
@@ -22,11 +22,55 @@ sensor:
         query: !secret mariadb_sizequery
         column: 'value'
         unit_of_measurement: MB
+  - platform: pi_hole
+    host: !secret pihole_ip
+  - platform: template
+    sensors:
+      fritzbox_is_linked:
+        entity_id:
+          - sensor.fritz_netmonitor
+        friendly_name: 'Link status'
+        value_template: "{{ state_attr('sensor.fritz_netmonitor', 'is_linked') }}"
+        icon_template: >
+           if (state == 'true')   mdi:network-outline
+           if (state == 'false')  mdi:network-off-outline
+           mdi:alert-outline
+      fritzbox_is_connected:
+        entity_id:
+          - sensor.fritz_netmonitor
+        friendly_name: "Connection status"
+        value_template: "{{ state_attr('sensor.fritz_netmonitor', 'is_connected') }}"
+        icon_template: >
+           if (state == 'true')   mdi:ip-network-outline
+           if (state == 'false')  mdi:ip-network-off-outline
+           mdi:alert-outline
+      fritzbox_uptime:
+        friendly_name: 'Fritzbox Uptime'
+        icon_template: mdi:clock-outline
+        value_template: >
+          {% set uptime_days    = ((state_attr('sensor.fritz_netmonitor', 'uptime')  | default(0) | int) / 86400) | int %}
+          {% set uptime_hours   = (((state_attr('sensor.fritz_netmonitor', 'uptime') | default(0) | int) % 86400) / 3600) | int %}
+          {% set uptime_minutes = (((state_attr('sensor.fritz_netmonitor', 'uptime') | default(0) | int) % 3600) /    60) | int %}
+          {% set uptime_seconds = ((state_attr('sensor.fritz_netmonitor', 'uptime')  | default(0) | int) % 60)    | int %}
+            {{ uptime_days }}d {{ uptime_hours }}h {{ uptime_minutes }}m {{ uptime_seconds }}s
 
 group:
   network:
     entities:
       - sensor.database_size
+      - sensor.fritz_netmonitor
+      - sensor.fritzbox_is_linked
+      - sensor.fritzbox_is_connected
+      - sensor.fritzbox_uptime
+      - sensor.status_sda
+      - sensor.status_sdb
+      - sensor.status_smart_sda
+      - sensor.status_smart_sdb
+      - sensor.status_volume_1
+      - sensor.cpu_load_total
+      - sensor.memory_use
+      - sensor.memory_usage_real
+      - sensor.volume_used_volume_1
       - sensor.uptime
 
 homeassistant:

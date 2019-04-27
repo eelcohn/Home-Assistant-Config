@@ -1,0 +1,53 @@
+# Latest version of Traccar
+sensor:
+  - platform: rest
+    resource: !secret traccar_api_url
+    name: Traccar Version
+    scan_interval: 86400
+    value_template: '{{ value_json.version.split("-")[0] }}'
+  - platform: rest
+    resource: https://raw.githubusercontent.com/traccar/traccar/master/swagger.json
+    name: Traccar Version Latest
+    scan_interval: 86400
+    value_template: '{{ value_json.info.version }}'
+
+custom_updater:
+  track:
+    - cards
+    - components
+    - python_scripts
+  card_urls:
+    - https://raw.githubusercontent.com/kalkih/mini-media-player/master/tracker.json
+  component_urls:
+    - https://raw.githubusercontent.com/eelcohn/home-assistant-rdw/master/custom_updater.json
+    - https://raw.githubusercontent.com/xirixiz/home-assistant-config/master/custom_updater.json
+
+group:
+  custom_updater:
+    entities:
+      - sensor.custom_card_tracker
+      - sensor.custom_component_tracker
+      - sensor.custom_python_script_tracker
+
+automation:
+  - alias: 'Home Assistant update notifications'
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: updater.updater
+    action:
+      - service: notify.eelco
+        data:
+          title: '*Update melding*'
+          message: 'Er is een nieuwe versie van Home Assistant beschikbaar ( v{{ updater.updater }}).'
+  - alias: 'Traccar update notifications'
+    initial_state: true
+    trigger:
+      - platform: template
+        value_template: "{% if states('sensor.traccar_version') != states('sensor.traccar_version_latest') %}true{% endif %}"
+    action:
+      - service: notify.eelco
+        data:
+          title: '*Update melding*'
+          message: 'Er is een nieuwe versie van Traccar beschikbaar ( v{{ states("sensor.traccar_version_latest") }}).'
+

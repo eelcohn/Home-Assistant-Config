@@ -1,0 +1,18 @@
+mqtt:
+  password: !secret mqtt_password
+  discovery: true
+  discovery_prefix: tele
+
+automation:
+- id: tasmota_restart
+  alias: "Force Tasmota restart on HA start-up"
+  initial_state: True
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+    - service: mqtt.publish
+      data:
+        topic: "cmnd/sonoffs/restart"
+        payload: "1"
+

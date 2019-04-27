@@ -41,6 +41,7 @@
 
 # Personal photo's and floorplans
 www/accounts/*
+www/lovelace/floorplan/*
 
 # Allow custom components
 !custom_components/**

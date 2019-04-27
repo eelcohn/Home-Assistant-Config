@@ -52,16 +52,19 @@ group:
 
 automation:
   - alias: Notify when going away
+    initial_state: true
     trigger:
       platform: state
       entity_id: device_tracker.eelcapone
       from: 'home'
+      to: 'not_home'
     action:
       - service: notify.eelco
         data_template:
           title: '*Tracking notificatie*'
           message: Je bent zojuist vertrokken van huis.
   - alias: Notify when going home
+    initial_state: true
     trigger:
       platform: numeric_state
       entity_id: proximity.home

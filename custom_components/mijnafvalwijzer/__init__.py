@@ -1,0 +1,2 @@
+"""The Afvalwijzer sensors component."""
+

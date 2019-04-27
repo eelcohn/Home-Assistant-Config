@@ -2,14 +2,33 @@ sensor:
   - platform: rdw
     name: !secret car_name
     plate: !secret licenseplate
+    dateformat: '%d %b %Y'
     sensors:
       - expdate
       - insured
       - recall
-  - platform: template
+  - platform: rdw
+    name: "Toyota Auris"
+    plate: 16RSL9
+    dateformat: '%d %b %Y'
     sensors:
-      seat_leon_apk:
-          value_template: "{{ as_timestamp( strptime(states('sensor.seat_leon_expdate'), '%Y-%m-%d') ) | timestamp_custom('%a %d %b %Y') }}"
+      - expdate
+      - insured
+      - recall
+  - platform: rdw
+    name: "Bugatti Veyron"
+    plate: GD314N
+    sensors:
+      - expdate
+      - insured
+      - recall
+  - platform: rdw
+    name: "Chevrolet Nubira"
+    plate: 50RJJG
+    sensors:
+      - expdate
+      - insured
+      - recall
 
 group:
   car_seat_leon:
@@ -18,7 +37,6 @@ group:
       - sensor.seat_leon_expdate
       - sensor.seat_leon_insured
       - sensor.seat_leon_recall
-      - sensor.seat_leon_apk
 
 homeassistant:
   customize:
@@ -27,26 +45,28 @@ homeassistant:
     sensor.seat_leon_insured:
       friendly_name: "Verzekeringsstatus"
     sensor.seat_leon_recall:
-      friendly_name: "Terugroepstatus"
+      friendly_name: "Openstaande terugroepacties"
 
 automation:
     # ------------------------------------------------------- #
     # Notify when the APK date is about to expire             #
     # ------------------------------------------------------- #
   - alias: APK date expiration notification
+    initial_state: true
     trigger:
       - platform: template
-        value_template: "{{ (as_timestamp(strptime(states('sensor.seat_leon_expdate'), '%Y-%m-%d')) + (86400 * 22) == as_timestamp(strptime(states('sensor.date'), '%Y-%m-%d'))) }}"
+        value_template: "{{ ((as_timestamp(strptime(states('sensor.seat_leon_expdate'), '%d %b %Y')) / 86400) | int) == ((as_timestamp(strptime(states('sensor.date'), '%Y-%m-%d')) / 86400) | int) + 7 }}"
     action:
       - service: notify.eelco
         data_template:
           title: '*Auto*'
-          message: De APK keuring verloopt op {{ states.sensor.seat_leon_expdate.state }}. Plan een APK keuring bij de garage.
+          message: De APK keuring verloopt op {{ states('sensor.seat_leon_expdate') }}. Plan een APK keuring bij de garage.
 
     # ------------------------------------------------------- #
     # Notify when the car's insurance has expired             #
     # ------------------------------------------------------- #
   - alias: Insurance expiration notification
+    initial_state: true
     trigger:
       - platform: state
         entity_id: sensor.seat_leon_insured
@@ -61,6 +81,7 @@ automation:
     # Notify when a maintenance recall has been issued        #
     # ------------------------------------------------------- #
   - alias: Recall notification
+    initial_state: true
     trigger:
       - platform: state
         entity_id: sensor.seat_leon_recall
