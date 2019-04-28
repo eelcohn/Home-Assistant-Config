@@ -30,32 +30,24 @@
 # Allow the following subfolders
 !appdaemon
 !automations
-!custom_components
+!custom_components/**
 !docs
 !images
 !packages
 !scenes
 !scripts
 !themes
-!www
-!www/deliveries/*
-!www/mijnafvalwijzer/*
+!www/**
 
-# Personal photo's and floorplans
+# Don't sync personal photo's and floorplans
 www/accounts/*
 www/lovelace/floorplan/*
-
-# Allow custom components
-!custom_components/**
 
 # Ignore Sensitive Files
 secrets.yaml
 known_devices.yaml
 entity_registry.yaml
 ip_bans.yaml
-secrets.yaml
-phue*.conf
-lgwebos*.conf
 .uuid
 tts
 
@@ -79,8 +71,15 @@ webostv.conf
 
 # Cached stuff
 deps
-cache
+!cache
+!cache/tts
+!cache/zwave
+cache/phue*.conf
+cache/webostv.conf
+cache/tts/*
+cache/zwave/*
 .cache
+.storage
 
 # Python cache
 __pycache__
@@ -101,12 +100,6 @@ __pycache__
 .google.token
 *.pickle
 .spotify-token-cache
-.storage
-
-
-
-
-
 
 
 
