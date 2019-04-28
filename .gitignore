@@ -40,6 +40,7 @@
 !www
 !www/deliveries
 !www/deliveries/*
+!www/mijnafvalwijzer/*
 
 # Don't sync personal photo's and floorplans
 www/accounts/*
