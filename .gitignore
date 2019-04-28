@@ -74,17 +74,17 @@ appdaemon/__pycache__
 phue*.conf
 webostv.conf
 
-# Cached stuff
-!cache
-!cache/tts
-!cache/zwave
-cache/phue*.conf
-cache/webostv.conf
-cache/tts/*
-cache/zwave/*
+# Cached stuff: allow folders but don't allow folder contents
+!.cache
+!.cache/tts
+!.cache/zwave
+.cache/phue*.conf
+.cache/webostv.conf
+.cache/tts/*
+.cache/zwave/*
+cache
 deps
 tts
-.cache
 .storage
 
 
