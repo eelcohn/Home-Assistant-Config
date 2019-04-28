@@ -1,9 +1,11 @@
 [submodule "www/lovelace/tracker-card"]
 	path = www/lovelace/tracker-card
 	url = https://github.com/custom-cards/tracker-card
+	branch = master
 [submodule "custom_components/rdw"]
 	path = custom_components/rdw
 	url = https://github.com/eelcohn/home-assistant-rdw/
+	branch = master
 [submodule "www/lovelace/compact-custom-header"]
 	path = www/lovelace/compact-custom-header
 	url = https://github.com/maykar/compact-custom-header
