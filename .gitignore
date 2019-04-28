@@ -31,6 +31,7 @@
 !appdaemon
 !automations
 !custom_components/**
+!custom_components/**/**
 !docs
 !images
 !packages
@@ -38,8 +39,11 @@
 !scripts
 !themes
 !www
+!www/accounts
 !www/deliveries
 !www/deliveries/*
+!www/lovelace
+!www/lovelace/*
 !www/mijnafvalwijzer/*
 
 # Don't sync personal photo's and floorplans
