@@ -4,6 +4,3 @@
 [submodule "custom_components/rdw"]
 	path = custom_components/rdw
 	url = https://github.com/eelcohn/home-assistant-rdw/
-[submodule "www/lovelace/compact-custom-header"]
-	path = www/lovelace/compact-custom-header
-	url = https://github.com/maykar/compact-custom-header
