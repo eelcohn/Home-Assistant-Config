@@ -38,6 +38,8 @@
 !scripts
 !themes
 !www
+!www/deliveries/*
+!www/mijnafvalwijzer/*
 
 # Personal photo's and floorplans
 www/accounts/*
