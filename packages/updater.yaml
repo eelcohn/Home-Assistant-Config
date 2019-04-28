@@ -1,15 +1,38 @@
-# Latest version of Traccar
 sensor:
+    # Get the current version number for Traccar
   - platform: rest
     resource: !secret traccar_api_url
     name: Traccar Version
     scan_interval: 86400
     value_template: '{{ value_json.version.split("-")[0] }}'
+    # Get the latest version number for Traccar
   - platform: rest
     resource: https://raw.githubusercontent.com/traccar/traccar/master/swagger.json
     name: Traccar Version Latest
     scan_interval: 86400
     value_template: '{{ value_json.info.version }}'
+    # Get the latest version number for Eggdrop
+  - platform: scrape
+    resource: https://github.com/eggheads/eggdrop/blob/stable/1.8/src/version.h
+    name: Eggdrop Version Latest
+    scan_interval: 86400
+    select: '.pl-s'
+    value_template: 'v{{ value.split("\"")[1] }}'
+    # Get the latest version number for Tcl
+  - platform: scrape
+    resource: https://www.tcl.tk/software/tcltk/download.html
+    name: Tcl Version Latest
+    scan_interval: 86400
+    select: '.even'
+    value_template: 'v{{ value.split(" ")[1] }}'
+#  - platform: command_line
+#    name: Eggdrop Version
+#    command: 'export LD_LIBRARY_PATH="/usr/local/lib" >> null; (/var/packages/eggdrop/target/eggdrop -v | grep "Eggdrop" | cut -d" " -f2 | cut -d"v" -f2)'
+#    scan_interval: 86400
+#  - platform: command_line
+#    name: Tcl Version
+#    command: 'echo "puts [info patchlevel];exit 0" | tclsh'
+#    scan_interval: 86400
 
 custom_updater:
   track:
@@ -50,4 +73,24 @@ automation:
         data:
           title: '*Update melding*'
           message: 'Er is een nieuwe versie van Traccar beschikbaar ( v{{ states("sensor.traccar_version_latest") }}).'
+  - alias: 'Eggdrop update notifications'
+    initial_state: true
+    trigger:
+      - platform: template
+        value_template: "{% if 'v1.8.4' != states('sensor.eggdrop_version_latest') %}true{% endif %}"
+    action:
+      - service: notify.eelco
+        data:
+          title: '*Update melding*'
+          message: 'Er is een nieuwe versie van Eggdrop beschikbaar ( v{{ states("sensor.eggdrop_version_latest") }}).'
+  - alias: 'Traccar update notifications'
+    initial_state: true
+    trigger:
+      - platform: template
+        value_template: "{% if 'v8.6.9' != states('sensor.tcl_version_latest') %}true{% endif %}"
+    action:
+      - service: notify.eelco
+        data:
+          title: '*Update melding*'
+          message: 'Er is een nieuwe versie van Tcl beschikbaar ( v{{ states("sensor.tcl_version_latest") }}).'
 

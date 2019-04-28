@@ -31,6 +31,7 @@ automation:
             - 255
             - "{% if ((state_attr('sun.sun', 'elevation') < 0) and (now().hour < 12)) %}0{% else %}255{% endif %}"
             - "{% if ((state_attr('sun.sun', 'elevation') < 0) and (now().hour < 12)) %}0{% else %}255{% endif %}"
+# color_temp: 403
           entity_id:
             - light.stairs_h
             - light.stairs_m
