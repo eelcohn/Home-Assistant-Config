@@ -37,7 +37,9 @@
 !scenes
 !scripts
 !themes
-!www/**
+!www
+!www/deliveries
+!www/deliveries/*
 
 # Don't sync personal photo's and floorplans
 www/accounts/*
