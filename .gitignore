@@ -47,12 +47,14 @@ www/accounts/*
 www/lovelace/floorplan/*
 
 # Ignore Sensitive Files
-secrets.yaml
-known_devices.yaml
 entity_registry.yaml
+google_calendars.yaml
 ip_bans.yaml
+known_devices.yaml
+secrets.yaml
+.config_entries.json
+.ip_authenticated.yaml
 .uuid
-tts
 
 # Logs
 logs
@@ -68,12 +70,11 @@ pids
 # AppDaemon
 appdaemon/__pycache__
 
-# Config files
+# Config files for Philips Hue and LG WebOS TV's
 phue*.conf
 webostv.conf
 
 # Cached stuff
-deps
 !cache
 !cache/tts
 !cache/zwave
@@ -81,8 +82,11 @@ cache/phue*.conf
 cache/webostv.conf
 cache/tts/*
 cache/zwave/*
+deps
+tts
 .cache
 .storage
+
 
 # Python cache
 __pycache__
@@ -112,13 +116,9 @@ __pycache__
 
 home-assistant.env
 home-assistant.*
-entity_registry.yaml
-google_calendars.yaml
 
 *.noload
 *.txt
 *.xml
 *.backup
-.ip_authenticated.yaml
-.config_entries.json
 
