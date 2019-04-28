@@ -31,11 +31,13 @@ WiFi devices:
 Vacuum cleaners:
 * [Roomba iRobot 896](https://www.irobot.com/for-the-home/vacuuming/roomba)
 
-Audio/video:
+Audio/video/gaming:
 * [LG WebOS TV](https://www.lg.com/)
 * [Samsung TV](https://www.samsung.com/)
 * [Marantz NR1602 receiver](https://www.us.marantz.com/us/Products/Pages/ProductDetails.aspx?Catid=AVReceivers&SubCatId=0&ProductId=NR1602)
 * [Marantz M-CR603 receiver](https://www.us.marantz.com/us/products/pages/productdetails.aspx?catid=hificomponents&subcatid=0&productid=mcr603)
+* [Sony PlayStation 4](https://www.playstation.com/)
+* [RaspberryPi 3 Model B+](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/) with [LibreElec](https://libreelec.tv/) [Kodi entertainment centre](https://kodi.tv/)
 
 Other:
 * [Synology Disk Station NAS](https://www.synology.com/en-global/dsm)
