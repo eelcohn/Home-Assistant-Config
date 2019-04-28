@@ -16,7 +16,7 @@ Zigbee devices:
 * [Philips Hue bridge](https://www2.meethue.com/en-us/p/hue-bridge/046677458478)
 * [Ikea Tradfri](https://www.ikea.com/us/en/search/?query=TR%C3%85DFRI) GU10 lightbulbs
 * [Innr lightbulbs](http://www.innrlighting.com/en/)
-* [GLEDOPTO GL-S-007Z](https://www.gearbest.com/smart-bulb/pp_009909771037.html) GU10 color lightbulbs
+* [GLEDOPTO GL-S-007Z](http://www.gledopto.com/h-col-322.html) GU10 color lightbulbs
 * [Icasa ICZB-IW11D](http://www.icasa.io/) in-wall Zigbee dimmer
 * [Philips Hue indoor motion detectors](https://www2.meethue.com/en-us/p/hue-motion-sensor/046677473389)
 
