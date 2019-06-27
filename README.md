@@ -44,5 +44,6 @@ Other:
 * [Synology Disk Station NAS](https://www.synology.com/en-global/dsm)
 * [Pi-Hole DNS server with adblocker](https://pi-hole.net/)
 * [Traccar device tracking server](https://www.traccar.org/)
+* [Eclipse Mosquitto MQTT broker server](https://mosquitto.org/)
 * [APC SmartUPS](https://www.apc.com/shop/us/en/categories/power/uninterruptible-power-supply-ups-/network-and-server/smart-ups/N-1h89yke)
 * [DSMR smart energy meter](https://www.netbeheernederland.nl/dossiers/slimme-meter-15/documenten)
